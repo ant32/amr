@@ -44,11 +44,10 @@ compile() {
       $normal_user cp $pkg*.pkg.tar.xz $temp_repository
       rm $temp_repository/temp.db*
       $normal_user repo-add $temp_repository/temp.db.tar.gz $temp_repository/*
-      lyes | pacman -Scc
-      pacman -Syy
+      lyes | pacman -Scc && pacman -Sy
     popd
     # uninstall no longer needed packages
-    lyes | pacman -Rs $(pacman -Qtdq)
+    lyes | pacman -Rscnd $(pacman -Qtdq)
   done
 }
 
@@ -67,13 +66,17 @@ install_deps() {
     else
       ndept=${dept:0:$i}
     fi
+    # fix some oth the mingw depndencies
+    if [ "${ndept}" = "mingw-w64-crt" ]; then ndept="mingw-w64-crt-svn"; fi
+    if [ "${ndept}" = "mingw-w64-headers" ]; then ndept="mingw-w64-headers-svn"; fi
+    if [ "${pkgname}" = *qt5* ]; then
+      if [ "${ndept}" = "mingw-w64-gcc" ]; then ndept="mingw-w64-gcc-qt5"; fi
+    fi
     # add to new array
-    if [ "${ndept}" = "mingw-w64-crt" ]; then ndept=("mingw-w64-crt-svn"); fi
-    if [ "${ndept}" = "mingw-w64-headers" ]; then ndept=("mingw-w64-headers-svn"); fi
     depts+=("${ndept}")
   done
   # install all needed packages as dependencies for easy removal later
-  pacman --sync --asdeps --needed --noconfirm ${depts[@]}
+  lyes | pacman --sync --asdeps --needed ${depts[@]}
 }
 
 

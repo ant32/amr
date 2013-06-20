@@ -107,7 +107,7 @@ if [ ! -f update.lock ]; then
     source "$pkg/PKGBUILD"
     curver=`pacman -Si $pkg | grep Version | tr -d ' ' | sed -e "s/Version://"`
     if [ "$curver" != "$pkgver-$pkgrel" ]; then
-      echo "updating $pkg from $curver to $pkgver-$pkgrel"
+      echo "updating $pkg from $curver to $pkgver-$pkgrel" | tee -a $mainlog
       updatelist+=($pkg)
     fi
   done

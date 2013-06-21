@@ -1,19 +1,16 @@
 #!/usr/bin/bash
 # Entry script to use with a cron job to automaticaly compile packages when updated.
 
-
-# TODO:
-# Create a text file wich states which packages where successfully compiled and combine
-# that with the log files into a compressed archive.
+# TODO: Create a text file wich states which packages where successfully compiled
+# and combine that with the log files into a compressed archive.
 
 
 # update variables
 normal_user="sudo -u amr"
-checkdir="/home/amr/checkdir"
-builddir="/home/amr/build"
-homedir="/home/amr"
-temp_repository="/home/amr/pkgs"
-mainlog="/home/amr/update.log"
+checkdir="/build/checkdir"
+builddir="/build"
+test_repository="/srv/http/archlinux/mingw-w64-testing/os/x86_64"
+mainlog="/build/update.log"
 
 
 # my yes function that is limited to 10 rounds
@@ -42,16 +39,15 @@ compile() {
       rm -fR src; rm -fR pkg
       # if package was created update temp repository
       if [ -f $pkg*.pkg.tar.xz ]; then
-        $normal_user cp $pkg*.pkg.tar.xz $temp_repository
-        rm $temp_repository/temp.db*
-        $normal_user repo-add $temp_repository/temp.db.tar.gz $temp_repository/*
+        $normal_user cp $pkg*.pkg.tar.xz $test_repository
+        $normal_user repo-add $test_repository/temp.db.tar.gz $test_repository/$pkg*.pkg.tar.xz
         lyes | pacman -Scc && pacman -Sy
       else
         echo "$pkg failed to build" | tee -a $mainlog
       fi
     popd
     # uninstall no longer needed packages
-    lyes | pacman -Rscnd $(pacman -Qtdq)
+    lyes | pacman -Rscnd $(pacman -Qtdq) mingw-w64
   done
 }
 
@@ -73,7 +69,7 @@ install_deps() {
     # fix some oth the mingw depndencies
     if [ "${ndept}" = "mingw-w64-crt" ]; then ndept="mingw-w64-crt-svn"; fi
     if [ "${ndept}" = "mingw-w64-headers" ]; then ndept="mingw-w64-headers-svn"; fi
-    if [ "${pkgname}" = *qt5* ]; then
+    if [[ "${pkgname}" = *"qt5"* ]]; then
       if [ "${ndept}" = "mingw-w64-gcc" ]; then ndept="mingw-w64-gcc-qt5"; fi
     fi
     # add to new array
@@ -84,38 +80,36 @@ install_deps() {
 }
 
 
-# check for lock file and create one if it does not exsist
-if [ ! -f update.lock ]; then
-  
-  # create lock
-  $normal_user touch "$homedir/update.lock"
-  echo "STARTING UPDATE `date`" | tee -a $mainlog
-  
-  # update package cache
-  lyes | pacman -Scc && pacman -Sy
-  
-  # create package list
-  while read pkg; do pkglist+=($pkg); done < buildlist.txt
-  
+create_updatelist() {
+  unset updatelist
   # loop to download and extract all packages
   cd $checkdir
-  rm -fR *
+  $normal_user rm -fR "$checkdir/"*
   for pkg in ${pkglist[@]}; do
     $normal_user curl -O "https://aur.archlinux.org/packages/${pkg:0:2}/$pkg/$pkg.tar.gz"
     $normal_user tar xzvf "$pkg.tar.gz"
     rm "$pkg.tar.gz"
   done
-  
+
   # loop to check for packages that are outdated
   for pkg in ${pkglist[@]}; do
     source "$pkg/PKGBUILD"
     curver=`pacman -Si $pkg | grep Version | tr -d ' ' | sed -e "s/Version://"`
+
+    # manual changes to some packages to make them not auto update
+    if [ "$pkg" = "mingw-w64-headers-svn" ]; then
+      if [ "$pkgver-$pkgrel" = "5792-1" ]; then pkgver="5882"; fi
+    fi
+
     if [ "$curver" != "$pkgver-$pkgrel" ]; then
       echo "updating $pkg from $curver to $pkgver-$pkgrel" | tee -a $mainlog
       updatelist+=($pkg)
     fi
   done
-  
+}
+
+
+create_compilejobs() {
   # for each outdated package create a compile job
   for pkg in ${updatelist[@]}; do
     buildlist=($pkg)
@@ -138,9 +132,28 @@ if [ ! -f update.lock ]; then
       compile "${buildlist[@]}"
     popd
   done
-  
+}
+
+
+# check for lock file and create one if it does not exsist
+if [ ! -f update.lock ]; then
+
+  # create lock
+  $normal_user touch "$builddir/update.lock"
+  echo "STARTING UPDATE `date`" | tee -a $mainlog
+
+  # update package cache
+  lyes | pacman -Scc && pacman -Syy
+
+  # create package list
+  unset pkglist
+  while read pkg; do pkglist+=($pkg); done < "$builddir/scripts/builtlist.txt"
+
+  create_updatelist
+  create_compilejobs
+
   # remove lock
   echo "Building packages completed at `date`" | tee -a $mainlog
-  rm -R "$checkdir/"*
-  rm "$homedir/update.lock"
+  $normal_user rm -R "$checkdir/"*
+  rm "$builddir/update.lock"
 fi

@@ -40,11 +40,15 @@ compile() {
       lyes | $normal_user makepkg -L -c
       # since our space is limited we'll remove src and pkg directories
       rm -fR src; rm -fR pkg
-      # update temp repository
-      $normal_user cp $pkg*.pkg.tar.xz $temp_repository
-      rm $temp_repository/temp.db*
-      $normal_user repo-add $temp_repository/temp.db.tar.gz $temp_repository/*
-      lyes | pacman -Scc && pacman -Sy
+      # if package was created update temp repository
+      if [ -f $pkg*.pkg.tar.xz ]; then
+        $normal_user cp $pkg*.pkg.tar.xz $temp_repository
+        rm $temp_repository/temp.db*
+        $normal_user repo-add $temp_repository/temp.db.tar.gz $temp_repository/*
+        lyes | pacman -Scc && pacman -Sy
+      else
+        echo "$pkg failed to build" | tee -a $mainlog
+      fi
     popd
     # uninstall no longer needed packages
     lyes | pacman -Rscnd $(pacman -Qtdq)
@@ -76,7 +80,7 @@ install_deps() {
     depts+=("${ndept}")
   done
   # install all needed packages as dependencies for easy removal later
-  lyes | pacman --sync --asdeps --needed ${depts[@]}
+  pacman --sync --asdeps --needed --noconfirm ${depts[@]}
 }
 
 
@@ -136,6 +140,7 @@ if [ ! -f update.lock ]; then
   done
   
   # remove lock
+  echo "Building packages completed at `date`" | tee -a $mainlog
   rm -R "$checkdir/"*
   rm "$homedir/update.lock"
 fi

@@ -36,3 +36,16 @@ mingw-w64-qt5-qtdeclarative
 mingw-w64-qt5-qtscript
 mingw-w64-qt5-qttools
 mingw-w64-qt5-qtquick1
+mingw-w64-quazip-qt5
+mingw-w64-atk
+mingw-w64-bzip2
+mingw-w64-expat
+mingw-w64-freetype
+mingw-w64-fontconfig
+mingw-w64-pixman
+mingw-w64-cairo
+mingw-w64-jasper
+mingw-w64-gdk-pixbuf2
+mingw-w64-pango
+mingw-w64-gtk3
+

@@ -116,7 +116,7 @@ create_compilejobs() {
     # check all packages and add the package to the list tath depends on pkg
     for dep in ${pkglist[@]}; do
       unset depends optdepends makedepends
-      source "$dep/PKGBUILD"
+      source "$checkdir/$dep/PKGBUILD"
       for rdep in "${depends[@]}" "${optdepends[@]}" "${makedepends[@]}"; do
         # remove description from dependency
         i=`expr index "${rdep}" : - 1`

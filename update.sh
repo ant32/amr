@@ -26,7 +26,7 @@ lyes() {
 # compile function
 compile() {
   for pkg in "$@"; do
-    echo "building $pkg" | tee -a $mainlog
+    echo "building $pkg" | tee -a $mainlog $buildlog
     # download package
     $normal_user curl -O https://aur.archlinux.org/packages/${pkg:0:2}/$pkg/$pkg.tar.gz
     $normal_user tar xzvf $pkg.tar.gz
@@ -43,7 +43,7 @@ compile() {
         $normal_user repo-add $test_repository/temp.db.tar.gz $test_repository/$pkg*.pkg.tar.xz
         lyes | pacman -Scc && pacman -Sy
       else
-        echo "$pkg failed to build" | tee -a $mainlog
+        echo "$pkg failed to build" | tee -a $mainlog $buildlog
       fi
     popd
     # uninstall no longer needed packages
@@ -101,6 +101,11 @@ create_updatelist() {
       if [ "$pkgver-$pkgrel" = "5792-1" ]; then pkgver="5882"; fi
     fi
 
+    # skip packages
+    if [ "$pkg" = "mingw-w64-qt5-qtbase-static" ]; then curver="$pkgver-$pkgrel"; fi
+    if [ "$pkg" = "mingw-w64-qt5-qttools" ]; then curver="$pkgver-$pkgrel"; fi
+    if [ "$pkg" = "mingw-w64-qt5-qtquick1" ]; then curver="$pkgver-$pkgrel"; fi
+    
     if [ "$curver" != "$pkgver-$pkgrel" ]; then
       echo "updating $pkg from $curver to $pkgver-$pkgrel" | tee -a $mainlog
       updatelist+=($pkg)
@@ -122,15 +127,23 @@ create_compilejobs() {
         i=`expr index "${rdep}" : - 1`
         if [ "$i" -eq '-1' ]; then i="${#rdep}"; fi
         # if package in reverse dependencies then add to build list
-        if [ "${rdep:0:$i}" == "$pkg" ]; then buildlist+=($dep) ;fi
+        if [ "${rdep:0:$i}" = "$pkg" ]; then buildlist+=($dep) ;fi
       done
     done
     build="${pkg}_`date "+%Y%m%d-%H%M"`"
     $normal_user mkdir -p "$builddir/$build"
+    buildlog="$builddir/$build/build.log"
     pushd "$builddir/$build"
-      echo "package build job: ${buildlist[@]}" | tee -a $mainlog
+      echo "package build job: ${buildlist[@]}" | tee -a $mainlog $buildlog
       compile "${buildlist[@]}"
+      # create compile log
+      if [ -f */*.log ]; then
+        $normal_user tar -czf "$builddir/${build}.log.tar.gz" *.log */*.log
+      else
+        $normal_user tar -czf "$builddir/${build}.log.tar.gz" *.log
+      fi
     popd
+    $normal_user rm -fR "$builddir/$build"
   done
 }
 
@@ -147,7 +160,7 @@ if [ ! -f update.lock ]; then
 
   # create package list
   unset pkglist
-  while read pkg; do pkglist+=($pkg); done < "$builddir/scripts/builtlist.txt"
+  while read pkg; do pkglist+=($pkg); done < "$builddir/scripts/buildlist.txt"
 
   create_updatelist
   create_compilejobs

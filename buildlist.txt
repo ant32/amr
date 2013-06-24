@@ -38,6 +38,7 @@ mingw-w64-qt5-qtdeclarative
 mingw-w64-qt5-qtscript
 mingw-w64-qt5-qttools
 mingw-w64-qt5-qtquick1
+mingw-w64-quazip-qt4
 mingw-w64-quazip-qt5
 mingw-w64-atk
 mingw-w64-bzip2

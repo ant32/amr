@@ -1,10 +1,6 @@
 #!/usr/bin/bash
 # Entry script to use with a cron job to automaticaly compile packages when updated.
 
-# TODO: Create a text file wich states which packages where successfully compiled
-# and combine that with the log files into a compressed archive.
-
-
 # update variables
 normal_user="sudo -u amr"
 checkdir="/build/checkdir"
@@ -40,8 +36,8 @@ compile() {
       # if package was created update temp repository
       if [ -f $pkg*.pkg.tar.xz ]; then
         $normal_user cp $pkg*.pkg.tar.xz $test_repository
-        $normal_user repo-add $test_repository/temp.db.tar.gz $test_repository/$pkg*.pkg.tar.xz
-        lyes | pacman -Scc && pacman -Sy
+        $normal_user repo-add $test_repository/mingw-w64-testing.db.tar.gz $test_repository/$pkg*.pkg.tar.xz
+        lyes | pacman -Scc && pacman -Syy
       else
         echo "$pkg failed to build" | tee -a $mainlog $buildlog
       fi
@@ -54,6 +50,7 @@ compile() {
 
 # install dependencies function
 install_deps() {
+  unset depts
   # run file so that we get the variables
   source ./PKGBUILD
   # loop all dependencies

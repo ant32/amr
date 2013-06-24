@@ -29,6 +29,7 @@ mingw-w64-headers-secure
 mingw-w64-crt-secure
 gyp-svn
 mingw-w64-angleproject
+mingw-w64-qt
 mingw-w64-gcc-qt5
 mingw-w64-qt5-qtbase
 mingw-w64-qt5-qtbase-static

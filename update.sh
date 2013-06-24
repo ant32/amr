@@ -3,10 +3,10 @@
 
 # update variables
 normal_user="sudo -u amr"
-checkdir="/build/checkdir"
 builddir="/build"
 test_repository="/srv/http/archlinux/mingw-w64-testing/os/x86_64"
 mainlog="/build/update.log"
+tmpf=`mktemp`
 
 
 # my yes function that is limited to 10 rounds
@@ -32,18 +32,23 @@ compile() {
       # compile package
       lyes | $normal_user makepkg -L -c
       # since our space is limited we'll remove src and pkg directories
-      rm -fR src; rm -fR pkg
+      rm -fR src pkg
       # if package was created update temp repository
       if [ -f $pkg*.pkg.tar.xz ]; then
         $normal_user cp $pkg*.pkg.tar.xz $test_repository
         $normal_user repo-add $test_repository/mingw-w64-testing.db.tar.gz $test_repository/$pkg*.pkg.tar.xz
         lyes | pacman -Scc && pacman -Syy
       else
+        sed -i '$ d' $mainlog $buildlog
         echo "$pkg failed to build" | tee -a $mainlog $buildlog
       fi
     popd
-    # uninstall no longer needed packages
-    lyes | pacman -Rscnd $(pacman -Qtdq) mingw-w64
+    # uninstall no longer needed packages (this has to be done cause later when installing
+    # dependencies and there already is a package that provides something it'll sometimes not
+    # install the correct packages)
+    # becuase of the dependency circle that mingw crt and gcc make it has to be removed with force
+    lyes | pacman -Rscnd mingw-w64
+    lyes | pacman -Rscnd $(pacman -Qtdq)
   done
 }
 
@@ -53,6 +58,7 @@ install_deps() {
   unset depts
   # run file so that we get the variables
   source ./PKGBUILD
+  echo "Installing deps for ${pkg}" | tee -a "$builddir/$build/installdeps.log"
   # loop all dependencies
   for dept in "${depends[@]}" "${optdepends[@]}" "${makedepends[@]}"; do
     # remove description from dependency
@@ -72,25 +78,20 @@ install_deps() {
     # add to new array
     depts+=("${ndept}")
   done
+  
+  # manual stuff
+  if [ "${pkgname}" = "mingw-w64-angleproject" ]; then depts+=('mingw-w64-headers-secure' 'mingw-w64-crt-secure'); fi
+  
   # install all needed packages as dependencies for easy removal later
-  pacman --sync --asdeps --needed --noconfirm ${depts[@]}
+  pacman --sync --asdeps --needed --noconfirm ${depts[@]} | tee -a "$builddir/$build/installdeps.log"
 }
 
 
 create_updatelist() {
   unset updatelist
-  # loop to download and extract all packages
-  cd $checkdir
-  $normal_user rm -fR "$checkdir/"*
-  for pkg in ${pkglist[@]}; do
-    $normal_user curl -O "https://aur.archlinux.org/packages/${pkg:0:2}/$pkg/$pkg.tar.gz"
-    $normal_user tar xzvf "$pkg.tar.gz"
-    rm "$pkg.tar.gz"
-  done
-
   # loop to check for packages that are outdated
   for pkg in ${pkglist[@]}; do
-    source "$pkg/PKGBUILD"
+    curl "https://aur.archlinux.org/packages/${pkg:0:2}/$pkg/PKGBUILD" > tmpf && source tmpf
     curver=`pacman -Si $pkg | grep Version | tr -d ' ' | sed -e "s/Version://"`
 
     # manual changes to some packages to make them not auto update
@@ -117,19 +118,22 @@ create_compilejobs() {
     buildlist=($pkg)
     # check all packages and add the package to the list tath depends on pkg
     for dep in ${pkglist[@]}; do
-      unset depends optdepends makedepends
-      source "$checkdir/$dep/PKGBUILD"
-      for rdep in "${depends[@]}" "${optdepends[@]}" "${makedepends[@]}"; do
-        # remove description from dependency
-        i=`expr index "${rdep}" : - 1`
-        if [ "$i" -eq '-1' ]; then i="${#rdep}"; fi
-        # if package in reverse dependencies then add to build list
-        if [ "${rdep:0:$i}" = "$pkg" ]; then buildlist+=($dep) ;fi
-      done
+      # if package hasn't been built yet don't add it as a reverse dependency
+      if [[ `pacman -Si $dep` ]]; then
+        unset depends optdepends makedepends
+        curl "https://aur.archlinux.org/packages/${dep:0:2}/$dep/PKGBUILD" > tmpf && source tmpf
+        for rdep in "${depends[@]}" "${optdepends[@]}" "${makedepends[@]}"; do
+          # remove description from dependency
+          i=`expr index "${rdep}" : - 1`
+          if [ "$i" -eq '-1' ]; then i="${#rdep}"; fi
+          # if package in reverse dependencies then add to build list
+          if [ "${rdep:0:$i}" = "$pkg" ]; then buildlist+=($dep) ;fi
+        done
+      fi
     done
     build="${pkg}_`date "+%Y%m%d-%H%M"`"
-    $normal_user mkdir -p "$builddir/$build"
     buildlog="$builddir/$build/build.log"
+    $normal_user mkdir -p "$builddir/$build"
     pushd "$builddir/$build"
       echo "package build job: ${buildlist[@]}" | tee -a $mainlog $buildlog
       compile "${buildlist[@]}"
@@ -164,6 +168,5 @@ if [ ! -f update.lock ]; then
 
   # remove lock
   echo "Building packages completed at `date`" | tee -a $mainlog
-  $normal_user rm -R "$checkdir/"*
   rm "$builddir/update.lock"
 fi

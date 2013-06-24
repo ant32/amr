@@ -38,8 +38,8 @@ Virtual Machine for these scripts
     SigLevel = Optional TrustAll
     erver = file:///srv/http/archlinux/$repo/os/$arch
   
-execute `/build/scripts/repo_update.ssh`  
-10. and you're ready to use `update.sh`  
+9 execute `/build/scripts/repo_update.ssh`  
+10 and you're ready to use `update.sh`  
 
 Web file server
 --------

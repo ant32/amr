@@ -24,7 +24,7 @@ Virtual Machine for these scripts
 
 1 install packages packes `pacman -S base base-devel sudo openssh`  
 2 enable and start ssd `systemctl enable sshd && systemctl start sshd`  
-3 create the build user `useradd amr`  
+3 create the build user `useradd -m amr`  
 4 create folders `mkdir -p /build/scripts /srv/http/archlinux/mingw-w64{-testing,}/os/x86_64`  
 5 allow build user `chown -R amr /build /srv/http/archlinux`  
 6 build and place dummy package https://aur.archlinux.org/packages/dummy/ into `/build/scripts` and `/srv/http/archlinux/mingw-w64{-testing,}/os/x86_64`  

@@ -51,4 +51,11 @@ mingw-w64-jasper
 mingw-w64-gdk-pixbuf2
 mingw-w64-pango
 mingw-w64-gtk3
+mingw-w64-glew
+mingw-w64-openal
+mingw-w64-libogg
+mingw-w64-libvorbis
+mingw-w64-flac
+mingw-w64-libsndfile
+mingw-w64-sfml
 

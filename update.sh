@@ -91,7 +91,7 @@ create_updatelist() {
   unset updatelist
   # loop to check for packages that are outdated
   for pkg in ${pkglist[@]}; do
-    curl "https://aur.archlinux.org/packages/${pkg:0:2}/$pkg/PKGBUILD" > tmpf && source tmpf
+    curl "https://aur.archlinux.org/packages/${pkg:0:2}/$pkg/PKGBUILD" > $tmpf && source $tmpf
     curver=`pacman -Si $pkg | grep Version | tr -d ' ' | sed -e "s/Version://"`
 
     # manual changes to some packages to make them not auto update
@@ -121,7 +121,7 @@ create_compilejobs() {
       # if package hasn't been built yet don't add it as a reverse dependency
       if [[ `pacman -Si $dep` ]]; then
         unset depends optdepends makedepends
-        curl "https://aur.archlinux.org/packages/${dep:0:2}/$dep/PKGBUILD" > tmpf && source tmpf
+        curl "https://aur.archlinux.org/packages/${dep:0:2}/$dep/PKGBUILD" > $tmpf && source $tmpf
         for rdep in "${depends[@]}" "${optdepends[@]}" "${makedepends[@]}"; do
           # remove description from dependency
           i=`expr index "${rdep}" : - 1`

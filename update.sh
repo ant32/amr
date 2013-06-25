@@ -4,9 +4,9 @@
 # update variables
 normal_user="sudo -u amr"
 builddir="/build"
+pkgbuildsdir="$builddir\pkgbuilds"
 test_repository="/srv/http/archlinux/mingw-w64-testing/os/x86_64"
 mainlog="/build/update.log"
-tmpf=`mktemp`
 
 
 # my yes function that is limited to 10 rounds
@@ -46,7 +46,7 @@ compile() {
     # uninstall no longer needed packages (this has to be done cause later when installing
     # dependencies and there already is a package that provides something it'll sometimes not
     # install the correct packages)
-    # becuase of the dependency circle that mingw crt and gcc make it has to be removed with force
+    # becuase of the dependency circle that mingw crt and gcc make mingw-w64 has to be removed with force
     lyes | pacman -Rscnd mingw-w64
     lyes | pacman -Rscnd $(pacman -Qtdq)
   done
@@ -58,7 +58,7 @@ install_deps() {
   unset depts
   # run file so that we get the variables
   source ./PKGBUILD
-  echo "Installing deps for ${pkg}" | tee -a "$builddir/$build/installdeps.log"
+  echo "Installing dependencies for ${pkg}" | tee -a "$builddir/$build/installdeps.log"
   # loop all dependencies
   for dept in "${depends[@]}" "${optdepends[@]}" "${makedepends[@]}"; do
     # remove description from dependency
@@ -72,11 +72,14 @@ install_deps() {
     # fix some oth the mingw depndencies
     if [ "${ndept}" = "mingw-w64-crt" ]; then ndept="mingw-w64-crt-svn"; fi
     if [ "${ndept}" = "mingw-w64-headers" ]; then ndept="mingw-w64-headers-svn"; fi
-    if [[ "${pkgname}" = *"qt5"* ]]; then
+    if [[ "${pkgname}" = *"qt"* ]]; then
       if [ "${ndept}" = "mingw-w64-gcc" ]; then ndept="mingw-w64-gcc-qt5"; fi
     fi
-    # add to new array
-    depts+=("${ndept}")
+    # mingw-w64-xmms does not exsist
+    if [ "${ndept}" != "mingw-w64-xmms" ]; then
+      # add to new array
+      depts+=("${ndept}")
+    fi
   done
   
   # manual stuff
@@ -89,20 +92,24 @@ install_deps() {
 
 create_updatelist() {
   unset updatelist
+  mkdir -p $pkgbuildsdir
   # loop to check for packages that are outdated
   for pkg in ${pkglist[@]}; do
-    curl "https://aur.archlinux.org/packages/${pkg:0:2}/$pkg/PKGBUILD" > $tmpf && source $tmpf
-    curver=`pacman -Si $pkg | grep Version | tr -d ' ' | sed -e "s/Version://"`
+    echo "downloading PKGBUILD for $pkg"
+    curl -s "https://aur.archlinux.org/packages/${pkg:0:2}/$pkg/PKGBUILD" > "$pkgbuildsdir/$pkg"
+    source "$pkgbuildsdir/$pkg"
+    curver=`pacman -Si $pkg | grep Version | tr -d ' ' | sed -e "s/Version://" | head -n 1`
 
     # manual changes to some packages to make them not auto update
-    if [ "$pkg" = "mingw-w64-headers-svn" ]; then
-      if [ "$pkgver-$pkgrel" = "5792-1" ]; then pkgver="5882"; fi
-    fi
+    if [ "$pkg" = "mingw-w64-headers-svn" ]; then if [ "$pkgver-$pkgrel" = "5792-1" ]; then pkgver="5882"; fi; fi
+    if [ "$pkg" = "gyp-svn" ]; then if [ "$pkgver-$pkgrel" = "1631-1" ]; then pkgver="1654"; fi; fi
 
     # skip packages
     if [ "$pkg" = "mingw-w64-qt5-qtbase-static" ]; then curver="$pkgver-$pkgrel"; fi
     if [ "$pkg" = "mingw-w64-qt5-qttools" ]; then curver="$pkgver-$pkgrel"; fi
     if [ "$pkg" = "mingw-w64-qt5-qtquick1" ]; then curver="$pkgver-$pkgrel"; fi
+    if [ "$pkg" = "mingw-w64-quazip-qt4" ]; then curver="$pkgver-$pkgrel"; fi
+    if [ "$pkg" = "mingw-w64-qt" ]; then curver="$pkgver-$pkgrel"; fi
     
     if [ "$curver" != "$pkgver-$pkgrel" ]; then
       echo "updating $pkg from $curver to $pkgver-$pkgrel" | tee -a $mainlog
@@ -121,10 +128,10 @@ create_compilejobs() {
       # if package hasn't been built yet don't add it as a reverse dependency
       if [[ `pacman -Si $dep` ]]; then
         unset depends optdepends makedepends
-        curl "https://aur.archlinux.org/packages/${dep:0:2}/$dep/PKGBUILD" > $tmpf && source $tmpf
+        source "$pkgbuildsdir/$dep"
         for rdep in "${depends[@]}" "${optdepends[@]}" "${makedepends[@]}"; do
           # remove description from dependency
-          i=`expr index "${rdep}" : - 1`
+          i=`expr index "${rdep}" ':><=' - 1`
           if [ "$i" -eq '-1' ]; then i="${#rdep}"; fi
           # if package in reverse dependencies then add to build list
           if [ "${rdep:0:$i}" = "$pkg" ]; then buildlist+=($dep) ;fi
@@ -167,6 +174,7 @@ if [ ! -f update.lock ]; then
   create_compilejobs
 
   # remove lock
+  $normal_user rm -fR $pkgbuildsdir
   echo "Building packages completed at `date`" | tee -a $mainlog
   rm "$builddir/update.lock"
 fi

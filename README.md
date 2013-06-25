@@ -29,17 +29,22 @@ Virtual Machine for these scripts
 5 allow build user `chown -R amr /build /srv/http/archlinux`  
 6 build and place dummy package https://aur.archlinux.org/packages/dummy/ into `/build/scripts` and `/srv/http/archlinux/mingw-w64{-testing,}/os/x86_64`  
 7 copy and `buildlist.txt update.sh repo_update.ssh` into `/build/scripts`.  
-8 Add the following to the end of /etc/pacman.conf  
-  
+8 Add the following to the end of /etc/pacman.conf
+
     [mingw-w64]
     SigLevel = Optional TrustAll
     Server = file:///srv/http/archlinux/$repo/os/$arch
     [mingw-w64-testing]
     SigLevel = Optional TrustAll
     erver = file:///srv/http/archlinux/$repo/os/$arch
-  
-9 execute `/build/scripts/repo_update.ssh`  
-10 and you're ready to use `update.sh`  
+
+9 also uncomment the following two lines in `/etc/pacman.conf`
+
+    [multilib]
+    Include = /etc/pacman.d/mirrorlist
+
+10 execute `/build/scripts/repo_update.ssh`  
+11 and you're ready to use `update.sh`  
 
 Web file server
 --------

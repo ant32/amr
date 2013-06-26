@@ -58,4 +58,10 @@ mingw-w64-libvorbis
 mingw-w64-flac
 mingw-w64-libsndfile
 mingw-w64-sfml
+mingw-w64-libsigc++
+mingw-w64-glibmm
+mingw-w64-atkmm
+mingw-w64-cairomm
+mingw-w64-pangomm
+mingw-w64-gtkmm3
 

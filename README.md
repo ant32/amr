@@ -28,7 +28,7 @@ Virtual Machine for these scripts
 4 create folders `mkdir -p /build/scripts /srv/http/archlinux/mingw-w64{-testing,}/os/x86_64`  
 5 allow build user `chown -R amr /build /srv/http/archlinux`  
 6 build and place dummy package https://aur.archlinux.org/packages/dummy/ into `/build/scripts` and `/srv/http/archlinux/mingw-w64{-testing,}/os/x86_64`  
-7 copy and `buildlist.txt update.sh repo_update.ssh` into `/build/scripts`.  
+7 copy and `buildlist.txt update.sh repo_update.sh` into `/build/scripts`.  
 8 Add the following to the end of /etc/pacman.conf
 
     [mingw-w64]
@@ -43,7 +43,7 @@ Virtual Machine for these scripts
     [multilib]
     Include = /etc/pacman.d/mirrorlist
 
-10 execute `/build/scripts/repo_update.ssh`  
+10 execute `/build/scripts/repo_update.sh`  
 11 and you're ready to use `update.sh`  
 
 Web file server

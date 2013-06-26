@@ -4,7 +4,7 @@
 # update variables
 normal_user="sudo -u amr"
 builddir="/build"
-pkgbuildsdir="$builddir\pkgbuilds"
+pkgbuildsdir="$builddir/pkgbuilds"
 test_repository="/srv/http/archlinux/mingw-w64-testing/os/x86_64"
 mainlog="/build/update.log"
 
@@ -92,11 +92,11 @@ install_deps() {
 
 create_updatelist() {
   unset updatelist
-  mkdir -p $pkgbuildsdir
+  $normal_user mkdir -p $pkgbuildsdir
   # loop to check for packages that are outdated
   for pkg in ${pkglist[@]}; do
     echo "downloading PKGBUILD for $pkg"
-    curl -s "https://aur.archlinux.org/packages/${pkg:0:2}/$pkg/PKGBUILD" > "$pkgbuildsdir/$pkg"
+    $normal_user curl -s "https://aur.archlinux.org/packages/${pkg:0:2}/$pkg/PKGBUILD" > "$pkgbuildsdir/$pkg"
     source "$pkgbuildsdir/$pkg"
     curver=`pacman -Si $pkg | grep Version | tr -d ' ' | sed -e "s/Version://" | head -n 1`
 
@@ -145,11 +145,8 @@ create_compilejobs() {
       echo "package build job: ${buildlist[@]}" | tee -a $mainlog $buildlog
       compile "${buildlist[@]}"
       # create compile log
-      if [ -f */*.log ]; then
-        $normal_user tar -czf "$builddir/${build}.log.tar.gz" *.log */*.log
-      else
-        $normal_user tar -czf "$builddir/${build}.log.tar.gz" *.log
-      fi
+      $normal_user tar -czf "$builddir/${build}.log.tar.gz" *.log
+      $normal_user tar -rzf "$builddir/${build}.log.tar.gz" */*.log
     popd
     $normal_user rm -fR "$builddir/$build"
   done

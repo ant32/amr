@@ -36,7 +36,7 @@ Virtual Machine for these scripts
     Server = file:///srv/http/archlinux/$repo/os/$arch
     [mingw-w64-testing]
     SigLevel = Optional TrustAll
-    erver = file:///srv/http/archlinux/$repo/os/$arch
+    Server = file:///srv/http/archlinux/$repo/os/$arch
 
 9 also uncomment the following two lines in `/etc/pacman.conf`
 

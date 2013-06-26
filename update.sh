@@ -70,8 +70,12 @@ install_deps() {
       ndept=${dept:0:$i}
     fi
     # fix some oth the mingw depndencies
-    if [ "${ndept}" = "mingw-w64-crt" ]; then ndept="mingw-w64-crt-svn"; fi
-    if [ "${ndept}" = "mingw-w64-headers" ]; then ndept="mingw-w64-headers-svn"; fi
+    if [ "${pkgname}" = "mingw-w64-crt-secure" ]; then
+      if [ "${ndept}" = "mingw-w64-headers" ]; then ndept="mingw-w64-headers-secure"; fi
+    else
+      if [ "${ndept}" = "mingw-w64-crt" ]; then ndept="mingw-w64-crt-svn"; fi
+      if [ "${ndept}" = "mingw-w64-headers" ]; then ndept="mingw-w64-headers-svn"; fi
+    fi
     if [[ "${pkgname}" = *"qt"* ]]; then
       if [ "${ndept}" = "mingw-w64-gcc" ]; then ndept="mingw-w64-gcc-qt5"; fi
     fi
@@ -110,6 +114,10 @@ create_updatelist() {
     if [ "$pkg" = "mingw-w64-qt5-qtquick1" ]; then curver="$pkgver-$pkgrel"; fi
     if [ "$pkg" = "mingw-w64-quazip-qt4" ]; then curver="$pkgver-$pkgrel"; fi
     if [ "$pkg" = "mingw-w64-qt" ]; then curver="$pkgver-$pkgrel"; fi
+    if [ "$pkg" = "mingw-w64-pthreads" ]; then curver="$pkgver-$pkgrel"; fi
+    if [ "$pkg" = "mingw-w64-tcl" ]; then curver="$pkgver-$pkgrel"; fi
+    if [ "$pkg" = "mingw-w64-gtksourceview2" ]; then curver="$pkgver-$pkgrel"; fi
+    if [ "$pkg" = "mingw-w64-giflib" ]; then curver="$pkgver-$pkgrel"; fi
     
     if [ "$curver" != "$pkgver-$pkgrel" ]; then
       echo "updating $pkg from $curver to $pkgver-$pkgrel" | tee -a $mainlog

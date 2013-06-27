@@ -88,6 +88,7 @@ install_deps() {
   
   # manual stuff
   if [ "${pkgname}" = "mingw-w64-angleproject" ]; then depts+=('mingw-w64-headers-secure' 'mingw-w64-crt-secure'); fi
+  if [ "${pkgname}" = "mingw-w64-qt" ]; then depts+=('mingw-w64-qt5-qtbase'); fi
   
   # install all needed packages as dependencies for easy removal later
   pacman --sync --asdeps --needed --noconfirm ${depts[@]} | tee -a "$builddir/$build/$pkg/$pkg-installdeps.log"
@@ -113,11 +114,17 @@ create_updatelist() {
     if [ "$pkg" = "mingw-w64-qt5-qttools" ]; then curver="$pkgver-$pkgrel"; fi
     if [ "$pkg" = "mingw-w64-qt5-qtquick1" ]; then curver="$pkgver-$pkgrel"; fi
     if [ "$pkg" = "mingw-w64-quazip-qt4" ]; then curver="$pkgver-$pkgrel"; fi
-    if [ "$pkg" = "mingw-w64-qt" ]; then curver="$pkgver-$pkgrel"; fi
+    #if [ "$pkg" = "mingw-w64-qt" ]; then curver="$pkgver-$pkgrel"; fi
     if [ "$pkg" = "mingw-w64-pthreads" ]; then curver="$pkgver-$pkgrel"; fi
     if [ "$pkg" = "mingw-w64-tcl" ]; then curver="$pkgver-$pkgrel"; fi
     if [ "$pkg" = "mingw-w64-gtksourceview2" ]; then curver="$pkgver-$pkgrel"; fi
     if [ "$pkg" = "mingw-w64-giflib" ]; then curver="$pkgver-$pkgrel"; fi
+    if [ "$pkg" = "mingw-w64-librsvg" ]; then curver="$pkgver-$pkgrel"; fi
+    if [ "$pkg" = "mingw-w64-libwebp" ]; then curver="$pkgver-$pkgrel"; fi
+    if [ "$pkg" = "mingw-w64-openjpeg" ]; then curver="$pkgver-$pkgrel"; fi
+    if [ "$pkg" = "mingw-w64-sdl_image" ]; then curver="$pkgver-$pkgrel"; fi
+    if [ "$pkg" = "mingw-w64-sdl_ttf" ]; then curver="$pkgver-$pkgrel"; fi
+    if [ "$pkg" = "mingw-w64-wxmsw2.9" ]; then curver="$pkgver-$pkgrel"; fi
     
     if [ "$curver" != "$pkgver-$pkgrel" ]; then
       echo "updating $pkg from $curver to $pkgver-$pkgrel" | tee -a $mainlog

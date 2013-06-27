@@ -88,7 +88,6 @@ install_deps() {
   
   # manual stuff
   if [ "${pkgname}" = "mingw-w64-angleproject" ]; then depts+=('mingw-w64-headers-secure' 'mingw-w64-crt-secure'); fi
-  if [ "${pkgname}" = "mingw-w64-qt" ]; then depts+=('mingw-w64-qt5-qtbase'); fi
   
   # install all needed packages as dependencies for easy removal later
   pacman --sync --asdeps --needed --noconfirm ${depts[@]} | tee -a "$builddir/$build/$pkg/$pkg-installdeps.log"
@@ -114,7 +113,7 @@ create_updatelist() {
     if [ "$pkg" = "mingw-w64-qt5-qttools" ]; then curver="$pkgver-$pkgrel"; fi
     if [ "$pkg" = "mingw-w64-qt5-qtquick1" ]; then curver="$pkgver-$pkgrel"; fi
     if [ "$pkg" = "mingw-w64-quazip-qt4" ]; then curver="$pkgver-$pkgrel"; fi
-    #if [ "$pkg" = "mingw-w64-qt" ]; then curver="$pkgver-$pkgrel"; fi
+    if [ "$pkg" = "mingw-w64-qt" ]; then curver="$pkgver-$pkgrel"; fi
     if [ "$pkg" = "mingw-w64-pthreads" ]; then curver="$pkgver-$pkgrel"; fi
     if [ "$pkg" = "mingw-w64-tcl" ]; then curver="$pkgver-$pkgrel"; fi
     if [ "$pkg" = "mingw-w64-gtksourceview2" ]; then curver="$pkgver-$pkgrel"; fi
@@ -157,7 +156,7 @@ create_compilejobs() {
     buildlog="$builddir/$build/$pkg/$pkg-build.log"
     $normal_user mkdir -p "$builddir/$build"
     pushd "$builddir/$build"
-      echo "package build job: ${buildlist[@]}" | tee -a $mainlog $buildlog
+      if [ "${#buildlist[@]}" -gt 1 ]; then echo "package build job: ${buildlist[@]}" | tee -a $mainlog $buildlog; fi
       compile "${buildlist[@]}"
       # create compile log
       $normal_user tar -czf "$builddir/${build}.log.tar.gz" */*.log

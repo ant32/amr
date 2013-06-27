@@ -58,7 +58,7 @@ install_deps() {
   unset depts
   # run file so that we get the variables
   source ./PKGBUILD
-  echo "Installing dependencies for ${pkg}" | tee -a "$builddir/$build/installdeps.log"
+  echo "Installing dependencies for ${pkg}" | tee -a "$builddir/$build/$pkg/$pkg-installdeps.log"
   # loop all dependencies
   for dept in "${depends[@]}" "${optdepends[@]}" "${makedepends[@]}"; do
     # remove description from dependency
@@ -90,7 +90,7 @@ install_deps() {
   if [ "${pkgname}" = "mingw-w64-angleproject" ]; then depts+=('mingw-w64-headers-secure' 'mingw-w64-crt-secure'); fi
   
   # install all needed packages as dependencies for easy removal later
-  pacman --sync --asdeps --needed --noconfirm ${depts[@]} | tee -a "$builddir/$build/installdeps.log"
+  pacman --sync --asdeps --needed --noconfirm ${depts[@]} | tee -a "$builddir/$build/$pkg/$pkg-installdeps.log"
 }
 
 
@@ -147,14 +147,13 @@ create_compilejobs() {
       fi
     done
     build="${pkg}_`date "+%Y%m%d-%H%M"`"
-    buildlog="$builddir/$build/build.log"
+    buildlog="$builddir/$build/$pkg/$pkg-build.log"
     $normal_user mkdir -p "$builddir/$build"
     pushd "$builddir/$build"
       echo "package build job: ${buildlist[@]}" | tee -a $mainlog $buildlog
       compile "${buildlist[@]}"
       # create compile log
-      $normal_user tar -czf "$builddir/${build}.log.tar.gz" *.log
-      $normal_user tar -rzf "$builddir/${build}.log.tar.gz" */*.log
+      $normal_user tar -czf "$builddir/${build}.log.tar.gz" */*.log
     popd
     $normal_user rm -fR "$builddir/$build"
   done

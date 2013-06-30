@@ -88,6 +88,9 @@ install_deps() {
   
   # manual stuff
   if [ "${pkgname}" = "mingw-w64-angleproject" ]; then depts+=('mingw-w64-headers-secure' 'mingw-w64-crt-secure'); fi
+  if [ "${pkgname}" = "mingw-w64-giflib" ]; then depts+=('docbook-xml'); fi
+  if [ "${pkgname}" = "mingw-w64-sdl_ttf" ]; then depts+=('freetype2'); fi
+  if [ "${pkgname}" = "mingw-w64-sdl2_ttf" ]; then depts+=('freetype2'); fi
   
   # install all needed packages as dependencies for easy removal later
   pacman --sync --asdeps --needed --noconfirm ${depts[@]} | tee -a "$builddir/$build/$pkg/$pkg-installdeps.log"
@@ -101,32 +104,18 @@ create_updatelist() {
   for pkg in ${pkglist[@]}; do
     echo "downloading PKGBUILD for $pkg"
     $normal_user curl -s "https://aur.archlinux.org/packages/${pkg:0:2}/$pkg/PKGBUILD" > "$pkgbuildsdir/$pkg"
+    unset epoch nver
     source "$pkgbuildsdir/$pkg"
+    if [[ "$epoch" ]]; then nver="${epoch}:"; fi
+    nver="${nver}${pkgver}-${pkgrel}"
     curver=`pacman -Si $pkg | grep Version | tr -d ' ' | sed -e "s/Version://" | head -n 1`
 
     # manual changes to some packages to make them not auto update
-    if [ "$pkg" = "mingw-w64-headers-svn" ]; then if [ "$pkgver-$pkgrel" = "5792-1" ]; then pkgver="5882"; fi; fi
-    if [ "$pkg" = "gyp-svn" ]; then if [ "$pkgver-$pkgrel" = "1631-1" ]; then pkgver="1654"; fi; fi
-
-    # skip packages
-    if [ "$pkg" = "mingw-w64-qt5-qtbase-static" ]; then curver="$pkgver-$pkgrel"; fi
-    if [ "$pkg" = "mingw-w64-qt5-qttools" ]; then curver="$pkgver-$pkgrel"; fi
-    if [ "$pkg" = "mingw-w64-qt5-qtquick1" ]; then curver="$pkgver-$pkgrel"; fi
-    if [ "$pkg" = "mingw-w64-quazip-qt4" ]; then curver="$pkgver-$pkgrel"; fi
-    if [ "$pkg" = "mingw-w64-qt" ]; then curver="$pkgver-$pkgrel"; fi
-    if [ "$pkg" = "mingw-w64-pthreads" ]; then curver="$pkgver-$pkgrel"; fi
-    if [ "$pkg" = "mingw-w64-tcl" ]; then curver="$pkgver-$pkgrel"; fi
-    if [ "$pkg" = "mingw-w64-gtksourceview2" ]; then curver="$pkgver-$pkgrel"; fi
-    if [ "$pkg" = "mingw-w64-giflib" ]; then curver="$pkgver-$pkgrel"; fi
-    if [ "$pkg" = "mingw-w64-librsvg" ]; then curver="$pkgver-$pkgrel"; fi
-    if [ "$pkg" = "mingw-w64-libwebp" ]; then curver="$pkgver-$pkgrel"; fi
-    if [ "$pkg" = "mingw-w64-openjpeg" ]; then curver="$pkgver-$pkgrel"; fi
-    if [ "$pkg" = "mingw-w64-sdl_image" ]; then curver="$pkgver-$pkgrel"; fi
-    if [ "$pkg" = "mingw-w64-sdl_ttf" ]; then curver="$pkgver-$pkgrel"; fi
-    if [ "$pkg" = "mingw-w64-wxmsw2.9" ]; then curver="$pkgver-$pkgrel"; fi
+    if [ "$pkg" = "mingw-w64-headers-svn" ]; then if [ $nver = "5792-1" ]; then nver="5882-1"; fi; fi
+    if [ "$pkg" = "gyp-svn" ]; then if [ $nver = "1631-1" ]; then nver="1654-1"; fi; fi
     
-    if [ "$curver" != "$pkgver-$pkgrel" ]; then
-      echo "updating $pkg from $curver to $pkgver-$pkgrel" | tee -a $mainlog
+    if [ "$curver" != $nver ]; then
+      echo "updating $pkg from $curver to $nver" | tee -a $mainlog
       updatelist+=($pkg)
     fi
   done
@@ -178,7 +167,7 @@ if [ ! -f update.lock ]; then
 
   # create package list
   unset pkglist
-  while read pkg; do pkglist+=($pkg); done < "$builddir/scripts/buildlist.txt"
+  while read pkg; do if [ "${pkg:0:1}" != "#" ]; then pkglist+=($pkg); fi; done < "$builddir/scripts/buildlist.txt"
 
   create_updatelist
   create_compilejobs

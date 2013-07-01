@@ -97,7 +97,7 @@ mingw-w64-libconfig
 mingw-w64-libcroco
 mingw-w64-libevent
 mingw-w64-libmikmod
-#mingw-w64-librsvg
+mingw-w64-librsvg
 mingw-w64-libtheora
 mingw-w64-libunistring
 mingw-w64-libwebp

@@ -106,7 +106,7 @@ mingw-w64-libyaml
 mingw-w64-ruby
 mingw-w64-llvm-libs
 mingw-w64-ode
-#mingw-w64-openjpeg
+mingw-w64-openjpeg
 mingw-w64-pcre
 mingw-w64-portaudio
 mingw-w64-protobuf

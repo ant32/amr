@@ -91,6 +91,7 @@ install_deps() {
   if [ "${pkgname}" = "mingw-w64-giflib" ]; then depts+=('docbook-xml'); fi
   if [ "${pkgname}" = "mingw-w64-sdl_ttf" ]; then depts+=('freetype2'); fi
   if [ "${pkgname}" = "mingw-w64-sdl2_ttf" ]; then depts+=('freetype2'); fi
+  if [ "${pkgname}" = "mingw-w64-openjpeg" ]; then depts+=('lib32-glibc' 'libtiff'); fi
   
   # install all needed packages as dependencies for easy removal later
   pacman --sync --asdeps --needed --noconfirm ${depts[@]} | tee -a "$builddir/$build/$pkg/$pkg-installdeps.log"

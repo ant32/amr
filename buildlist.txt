@@ -47,7 +47,7 @@ mingw-w64-quazip-qt5
 mingw-w64-atk
 mingw-w64-bzip2
 mingw-w64-expat
-mingw-w64-freetype
+#mingw-w64-freetype
 mingw-w64-fontconfig
 mingw-w64-pixman
 mingw-w64-cairo
@@ -126,7 +126,7 @@ mingw-w64-sdl2_ttf
 mingw-w64-sparsehash
 mingw-w64-speex
 mingw-w64-stormlib
-#mingw-w64-wxmsw2.9
+mingw-w64-wxmsw2.9
 mingw-w64-xerces-c
 mingw-w64-binutils
 

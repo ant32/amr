@@ -128,5 +128,5 @@ mingw-w64-speex
 mingw-w64-stormlib
 mingw-w64-wxmsw2.9
 mingw-w64-xerces-c
-mingw-w64-binutils
+mingw-w64-tools
 

@@ -93,6 +93,7 @@ install_deps() {
   if [ "${pkgname}" = "mingw-w64-sdl2_ttf" ]; then depts+=('freetype2'); fi
   if [ "${pkgname}" = "mingw-w64-openjpeg" ]; then depts+=('lib32-glibc' 'libtiff'); fi
   if [ "${pkgname}" = "mingw-w64-librsvg" ]; then depts+=('gdk-pixbuf2'); fi
+  if [ "${pkgname}" = "mingw-w64-gtk3" ]; then depts+=('python2'); fi
   
   # install all needed packages as dependencies for easy removal later
   pacman --sync --asdeps --needed --noconfirm ${depts[@]} | tee -a "$builddir/$build/$pkg/$pkg-installdeps.log"

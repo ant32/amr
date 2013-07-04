@@ -1,4 +1,4 @@
-amr - Arch Mingw-w64 Repository
+amr - Arch Linux MinGW-w64 Repository
 ===
 
 This project contains the code that is used to automatically recompile mingw packages.
@@ -13,7 +13,8 @@ This repository is to be used with an up to date 64bit archlinux instalation. To
     SigLevel = Optional TrustAll
     Server = http://arch.linuxx.org/archlinux/$repo/os/$arch
 
-During the automatic build process the packeges will be placed in the following repo. You may wish to use it to help with the testing process.
+During the automatic build process the packeges will be placed in the following repo.
+You may wish to use it to help with the testing process.
 
     [mingw-w64-testing]
     SigLevel = Optional TrustAll

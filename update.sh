@@ -114,7 +114,7 @@ create_updatelist() {
 
     # manual changes to some packages to make them not auto update
     if [ "$pkg" = "mingw-w64-headers-svn" ]; then if [ $nver = "5792-1" ]; then nver="5882-1"; fi; fi
-    if [ "$pkg" = "gyp-svn" ]; then if [ $nver = "1631-1" ]; then nver="1654-1"; fi; fi
+    if [ "$pkg" = "gyp-svn" ]; then if [ $nver = "1631-1" ]; then nver="1658-1"; fi; fi
     
     if [ "$curver" != $nver ]; then
       echo "updating $pkg from $curver to $nver" | tee -a $mainlog

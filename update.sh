@@ -27,6 +27,10 @@ compile() {
     $normal_user curl -O https://aur.archlinux.org/packages/${pkg:0:2}/$pkg/$pkg.tar.gz
     $normal_user tar xzvf $pkg.tar.gz
     pushd $pkg
+      # modify pkgbuilds
+      if [ "${pkgname}" = "mingw-w64-fltk" ]; then 
+        sed -i 's|http://ftp.easysw.com/pub/$_basename/$pkgver/$_basename-$pkgver-source.tar.gz|http://fltk.org/pub/fltk/$pkgver/fltk-$pkgver-source.tar.gz|' PKGBUILD
+      fi
       # install dependencies
       install_deps
       # compile package

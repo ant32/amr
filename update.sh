@@ -29,15 +29,6 @@ compile() {
     pushd $pkg
       # install dependencies
       install_deps
-      # modify pkgbuilds
-      if [ "${pkgname}" = "mingw-w64-fltk" ]; then 
-        sed -i 's|http://ftp.easysw.com/pub/$_basename/$pkgver/$_basename-$pkgver-source.tar.gz|http://fltk.org/pub/fltk/$pkgver/fltk-$pkgver-source.tar.gz|' PKGBUILD
-      fi
-      if [ "${pkgname}" = "mingw-w64-yaml-cpp-hg" ]; then 
-        sed -i 's|"$_hgroot" "$_hgrepo"|"$_hgroot/$_hgrepo"|' PKGBUILD
-        sed -i 's|patch -Np1 -i ../yaml-cpp-pkg-config.patch|#patch -Np1 -i ../yaml-cpp-pkg-config.patch|' PKGBUILD
-        sed -i 's|mv "${pkgdir}/usr/${_arch}/bin/pkgconfig"|#mv "${pkgdir}/usr/${_arch}/bin/pkgconfig"|' PKGBUILD
-      fi
       # compile package
       lyes | $normal_user makepkg -L -c
       # since our space is limited we'll remove src and pkg directories

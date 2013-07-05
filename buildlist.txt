@@ -129,4 +129,22 @@ mingw-w64-stormlib
 mingw-w64-wxmsw2.9
 mingw-w64-xerces-c
 mingw-w64-tools
+mingw-w64-boost
+mingw-w64-assimp
+mingw-w64-fltk
+mingw-w64-freeimage
+mingw-w64-glfw
+mingw-w64-glm
+mingw-w64-libopencl
+oglp
+mingw-w64-oglp
+mingw-w64-opencl-headers
+mingw-w64-openctm
+mingw-w64-yaml-cpp-hg
+mingw-w64-alure
+mingw-w64-lua
+mingw-w64-bullet
+mingw-w64-enet
+mingw-w64-soil
+mingw-w64-utf8-cpp
 

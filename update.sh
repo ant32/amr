@@ -62,7 +62,7 @@ install_deps() {
   # loop all dependencies
   for dept in "${depends[@]}" "${optdepends[@]}" "${makedepends[@]}"; do
     # remove description from dependency
-    i=`expr index "${dept}" : - 1`
+    i=`expr index "${dept}" ':><=' - 1`
     # if not found use complete dependency
     if [ "$i" -eq '-1' ]; then
       ndept=$dept

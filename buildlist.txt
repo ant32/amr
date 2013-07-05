@@ -140,6 +140,7 @@ oglp
 mingw-w64-oglp
 mingw-w64-opencl-headers
 mingw-w64-openctm
+mingw-w64-yaml-cpp
 mingw-w64-alure
 mingw-w64-lua
 #mingw-w64-bullet

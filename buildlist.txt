@@ -147,4 +147,19 @@ mingw-w64-lua
 mingw-w64-enet
 mingw-w64-soil
 mingw-w64-utf8-cpp
+mingw-w64-opus
+mingw-w64-fribidi
+mingw-w64-gsm
+mingw-w64-lame
+mingw-w64-libass
+mingw-w64-libbluray
+mingw-w64-libmodplug
+mingw-w64-libvpx
+mingw-w64-ois
+mingw-w64-opencore-amr
+mingw-w64-orc
+mingw-w64-rtmpdump
+mingw-w64-schroedinger
+mingw-w64-x264
+mingw-w64-ffmpeg
 

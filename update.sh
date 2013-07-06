@@ -95,6 +95,9 @@ install_deps() {
   if [ "${pkgname}" = "mingw-w64-librsvg" ]; then depts+=('gdk-pixbuf2'); fi
   if [ "${pkgname}" = "mingw-w64-glfw" ]; then depts+=('cmake'); fi
   if [ "${pkgname}" = "mingw-w64-gtk3" ]; then depts+=('python2'); fi
+  if [ "${pkgname}" = "mingw-w64-libbluray" ]; then depts+=('libxml2'); fi
+  if [ "${pkgname}" = "mingw-w64-schroedinger" ]; then depts+=('orc'); fi
+  if [ "${pkgname}" = "mingw-w64-ffmpeg" ]; then depts+=('mingw-w64-pkg-config' ); fi
   
   # install all needed packages as dependencies for easy removal later
   pacman --sync --asdeps --needed --noconfirm ${depts[@]} | tee -a "$builddir/$build/$pkg/$pkg-installdeps.log"

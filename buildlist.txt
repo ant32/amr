@@ -116,7 +116,7 @@ mingw-w64-sdl_image
 mingw-w64-sdl2
 mingw-w64-sdl2_image
 mingw-w64-smpeg
-mingw-w64-smpeg-svn
+mingw-w64-smpeg2
 mingw-w64-sdl_mixer
 mingw-w64-sdl2_mixer
 mingw-w64-sdl_net

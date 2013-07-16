@@ -31,9 +31,9 @@ mingw-w64-headers-secure
 mingw-w64-crt-secure
 gyp-svn
 mingw-w64-angleproject
-#mingw-w64-qt
-#mingw-w64-qt-static
-#mingw-w64-qt-debug
+mingw-w64-qt4
+mingw-w64-qt4-static
+mingw-w64-qt4-debug
 mingw-w64-gcc-qt5
 mingw-w64-qt5-qtbase
 #mingw-w64-qt5-qtbase-static
@@ -42,12 +42,12 @@ mingw-w64-qt5-qtdeclarative
 mingw-w64-qt5-qtscript
 #mingw-w64-qt5-qttools
 #mingw-w64-qt5-qtquick1
-#mingw-w64-quazip-qt4
+mingw-w64-quazip-qt4
 mingw-w64-quazip-qt5
 mingw-w64-atk
 mingw-w64-bzip2
 mingw-w64-expat
-#mingw-w64-freetype
+mingw-w64-freetype
 mingw-w64-fontconfig
 mingw-w64-pixman
 mingw-w64-cairo
@@ -162,4 +162,7 @@ mingw-w64-rtmpdump
 mingw-w64-schroedinger
 mingw-w64-x264
 mingw-w64-ffmpeg
+mingw-w64-dlfcn
+mingw-w64-lapack
+mingw-w64-libgnurx
 

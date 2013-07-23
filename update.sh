@@ -8,7 +8,6 @@ pkgbuildsdir="$builddir/pkgbuilds"
 test_repository="/srv/http/archlinux/mingw-w64-testing/os/x86_64"
 mainlog="/build/update.log"
 
-
 # my yes function that is limited to 10 rounds
 lyes() {
   i=0
@@ -30,7 +29,7 @@ compile() {
       # install dependencies
       install_deps
       # compile package
-      lyes | $normal_user makepkg -L -c
+      $normal_user makepkg --noconfirm -L -c
       # since our space is limited we'll remove src and pkg directories
       rm -fR src pkg
       # if package was created update temp repository
@@ -76,7 +75,7 @@ install_deps() {
       if [ "${ndept}" = "mingw-w64-crt" ]; then ndept="mingw-w64-crt-svn"; fi
       if [ "${ndept}" = "mingw-w64-headers" ]; then ndept="mingw-w64-headers-svn"; fi
     fi
-    if [[ "${pkgname}" = *"qt"* ]]; then
+    if [[ "${pkgname}" = *"qt5"* ]]; then
       if [ "${ndept}" = "mingw-w64-gcc" ]; then ndept="mingw-w64-gcc-qt5"; fi
     fi
     # mingw-w64-xmms does not exsist
@@ -119,7 +118,7 @@ create_updatelist() {
 
     # manual changes to some packages to make them not auto update
     if [ "$pkg" = "mingw-w64-headers-svn" ]; then if [ $nver = "5792-1" ]; then nver="5882-1"; fi; fi
-    if [ "$pkg" = "gyp-svn" ]; then if [ $nver = "1631-1" ]; then nver="1675-1"; fi; fi
+    if [ "$pkg" = "gyp-svn" ]; then if [ $nver = "1631-1" ]; then nver="1654-1"; fi; fi
     
     if [ "$curver" != $nver ]; then
       echo "updating $pkg from $curver to $nver" | tee -a $mainlog

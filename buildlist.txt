@@ -72,7 +72,7 @@ mingw-w64-pangomm
 mingw-w64-gtkmm
 mingw-w64-gtkmm3
 mingw-w64-gtksourceview2
-#mingw-w64-pthreads
+mingw-w64-pthreads
 #mingw-w64-tcl
 mingw-w64-c-ares
 mingw-w64-gmp
@@ -165,4 +165,13 @@ mingw-w64-ffmpeg
 mingw-w64-dlfcn
 mingw-w64-lapack
 mingw-w64-libgnurx
-
+#mingw-w64-intel-tbb
+mingw-w64-freeglut
+#mingw-w64-plibc
+#mingw-w64-microhttpd
+mingw-w64-xalan-c
+#mingw-w64-qxorm
+mingw-w64-proj
+#mingw-w64-uriparser
+#mingw-w64-gdc
+#mingw-w64-bin

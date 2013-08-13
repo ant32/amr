@@ -36,7 +36,7 @@ mingw-w64-qt4-static
 mingw-w64-qt4-debug
 mingw-w64-gcc-qt5
 mingw-w64-qt5-qtbase
-#mingw-w64-qt5-qtbase-static
+mingw-w64-qt5-qtbase-static
 mingw-w64-qt5-qtjsbackend
 mingw-w64-qt5-qtdeclarative
 mingw-w64-qt5-qtscript
@@ -64,6 +64,7 @@ mingw-w64-libvorbis
 mingw-w64-flac
 mingw-w64-libsndfile
 mingw-w64-sfml
+mingw-w64-sfgui
 mingw-w64-libsigc++
 mingw-w64-glibmm
 mingw-w64-atkmm
@@ -172,6 +173,12 @@ mingw-w64-freeglut
 mingw-w64-xalan-c
 #mingw-w64-qxorm
 mingw-w64-proj
-#mingw-w64-uriparser
+mingw-w64-uriparser
 #mingw-w64-gdc
 #mingw-w64-bin
+mingw-w64-fftw
+mingw-w64-libsquish
+innoextract
+mingw-w64-nvidia-cg-toolkit
+mingw-w64-csfml
+

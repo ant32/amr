@@ -105,7 +105,6 @@ install_deps() {
   # install all needed packages as dependencies for easy removal later
   pacman --sync --asdeps --needed --noconfirm ${depts[@]} 2>&1 | tee -a "$builddir/$build/$pkg/$pkg-installdeps.log"
 }
-build/
 
 create_updatelist() {
   unset updatelist

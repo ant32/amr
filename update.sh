@@ -22,6 +22,12 @@ lyes() {
 compile() {
   for pkg in "$@"; do
     echo "building $pkg" | tee -a $mainlog $buildlog
+    # manual way to install qt4-dummy for now
+    if [ "$pkg" = 'mingw-w64-qt4-static' ]; then
+      curl -O https://dl.dropboxusercontent.com/u/33784287/websharing/mingw-w64-qt4-dummy/PKGBUILD
+      makepkg -i --noconfirm --asroot
+      rm -fR pkg src mingw-w64-qt4-dummy-1-1-any.pkg.tar.xz PKGBUILD
+    fi
     # download package
     $normal_user curl -O https://aur.archlinux.org/packages/${pkg:0:2}/$pkg/$pkg.tar.gz
     $normal_user tar xzvf $pkg.tar.gz
@@ -54,55 +60,52 @@ compile() {
 
 # install dependencies function
 install_deps() {
-  unset depts
-  # run file so that we get the variables
+  unset depts depends optdepends makedepends
+  # source file to get the variables
   source ./PKGBUILD
-  echo "Installing dependencies for ${pkg}" | tee -a "$builddir/$build/$pkg/$pkg-installdeps.log"
+  echo "Installing dependencies for ${pkg}" 2>&1 | tee -a "$builddir/$build/$pkg/$pkg-installdeps.log"
   # loop all dependencies
   for dept in "${depends[@]}" "${optdepends[@]}" "${makedepends[@]}"; do
     # remove description from dependency
-    i=`expr index "${dept}" ':><=' - 1`
-    # if not found use complete dependency
-    if [ "$i" -eq '-1' ]; then
-      ndept=$dept
-    else
-      ndept=${dept:0:$i}
-    fi
-    # fix some oth the mingw depndencies
-    if [ "${pkgname}" = "mingw-w64-crt-secure" ]; then
-      if [ "${ndept}" = "mingw-w64-headers" ]; then ndept="mingw-w64-headers-secure"; fi
-    else
-      if [ "${ndept}" = "mingw-w64-crt" ]; then ndept="mingw-w64-crt-svn"; fi
-      if [ "${ndept}" = "mingw-w64-headers" ]; then ndept="mingw-w64-headers-svn"; fi
-    fi
-    if [[ "${pkgname}" = *"qt5"* ]]; then
-      if [ "${ndept}" = "mingw-w64-gcc" ]; then ndept="mingw-w64-gcc-qt5"; fi
-    fi
-    # mingw-w64-xmms does not exsist
-    if [ "${ndept}" != "mingw-w64-xmms" ]; then
-      # add to new array
-      depts+=("${ndept}")
-    fi
+    i=`expr index "${dept}" ':' - 1`
+    [ "$i" -eq '-1' ] && ndept=$dept || ndept=${dept:0:$i}
+
+    # secure crt should be build with secure headers
+    [ "${pkgname}" = 'mingw-w64-crt-secure' ] && [ "${ndept}" = "mingw-w64-headers" ] && ndept='mingw-w64-headers-secure'
+    # there is currenty a problem with the latest stable mingw-w64 crt and headers
+    [ "${ndept}" = 'mingw-w64-crt' ] && ndept='mingw-w64-crt-svn'
+    [ "${ndept}" = 'mingw-w64-headers' ] && ndept='mingw-w64-headers-svn'
+    # qt5 package require a patched gcc to build
+    [[ "${pkgname}" = *"qt5"* ]] && [ "${ndept}" = 'mingw-w64-gcc' ] && ndept='mingw-w64-gcc-qt5'
+    # mingw-w64-xmms and mingw-w64-qt4-dummy don't exsist
+    [ "${ndept}" = 'mingw-w64-xmms' ] && unset ndept
+    [ "${ndept}" = 'mingw-w64-qt4-dummy' ] && unset ndept
+    [ "${pkgname}" = 'mingw-w64-qt4-static' ] && [ "${ndept}" = 'mingw-w64-qt4' ] && unset ndept
+
+    # add to new array
+    depts+=("${ndept}")
   done
   
-  # manual stuff
-  if [ "${pkgname}" = "mingw-w64-angleproject" ]; then depts+=('mingw-w64-headers-secure' 'mingw-w64-crt-secure'); fi
-  if [ "${pkgname}" = "mingw-w64-giflib" ]; then depts+=('docbook-xml'); fi
-  if [ "${pkgname}" = "mingw-w64-sdl_ttf" ]; then depts+=('freetype2'); fi
-  if [ "${pkgname}" = "mingw-w64-sdl2_ttf" ]; then depts+=('freetype2'); fi
-  if [ "${pkgname}" = "mingw-w64-openjpeg" ]; then depts+=('lib32-glibc' 'libtiff'); fi
-  if [ "${pkgname}" = "mingw-w64-librsvg" ]; then depts+=('gdk-pixbuf2'); fi
-  if [ "${pkgname}" = "mingw-w64-glfw" ]; then depts+=('cmake'); fi
-  if [ "${pkgname}" = "mingw-w64-gtk3" ]; then depts+=('python2'); fi
-  if [ "${pkgname}" = "mingw-w64-libbluray" ]; then depts+=('libxml2'); fi
-  if [ "${pkgname}" = "mingw-w64-schroedinger" ]; then depts+=('orc'); fi
-  if [ "${pkgname}" = "mingw-w64-ffmpeg" ]; then depts+=('mingw-w64-pkg-config' ); fi
-  if [ "${pkgname}" = "mingw-w64-uriparser" ]; then depts+=('cmake'); fi
+  # some packages have missing dependencies
+  [ "$pkgname" = 'mingw-w64-angleproject' ] && depts+=('mingw-w64-headers-secure' 'mingw-w64-crt-secure')
+  [ "$pkgname" = 'mingw-w64-giflib' ] && depts+=('docbook-xml')
+  [ "$pkgname" = 'mingw-w64-sdl_ttf' ] && depts+=('freetype2')
+  [ "$pkgname" = 'mingw-w64-sdl2_ttf' ] && depts+=('freetype2')
+  [ "$pkgname" = 'mingw-w64-openjpeg' ] && depts+=('lib32-glibc' 'libtiff')
+  [ "$pkgname" = 'mingw-w64-librsvg' ] && depts+=('gdk-pixbuf2')
+  [ "$pkgname" = 'mingw-w64-glfw' ] && depts+=('cmake')
+  [ "$pkgname" = 'mingw-w64-gtk3' ] && depts+=('python2')
+  [ "$pkgname" = 'mingw-w64-libbluray' ] && depts+=('libxml2')
+  [ "$pkgname" = 'mingw-w64-schroedinger' ] && depts+=('orc')
+  [ "$pkgname" = 'mingw-w64-ffmpeg' ] && depts+=('mingw-w64-pkg-config' )
+  [ "$pkgname" = 'mingw-w64-uriparser' ] && depts+=('cmake')
+  [ "$pkgname" = 'mingw-w64-qwt' ] && depts+=('mingw-w64-qt4')
+  [ "$pkgname" = 'mingw-w64-pthreads' ] && depts+=('mingw-w64-gcc')
   
   # install all needed packages as dependencies for easy removal later
-  pacman --sync --asdeps --needed --noconfirm ${depts[@]} | tee -a "$builddir/$build/$pkg/$pkg-installdeps.log"
+  pacman --sync --asdeps --needed --noconfirm ${depts[@]} 2>&1 | tee -a "$builddir/$build/$pkg/$pkg-installdeps.log"
 }
-
+build/
 
 create_updatelist() {
   unset updatelist
@@ -113,13 +116,13 @@ create_updatelist() {
     $normal_user curl -s "https://aur.archlinux.org/packages/${pkg:0:2}/$pkg/PKGBUILD" > "$pkgbuildsdir/$pkg"
     unset epoch nver
     source "$pkgbuildsdir/$pkg"
-    if [[ "$epoch" ]]; then nver="${epoch}:"; fi
+    [[ "$epoch" ]] && nver="${epoch}:"
     nver="${nver}${pkgver}-${pkgrel}"
     curver=`pacman -Si $pkg | grep Version | tr -d ' ' | sed -e "s/Version://" | head -n 1`
 
     # manual changes to some packages to make them not auto update
-    if [ "$pkg" = "mingw-w64-headers-svn" ]; then if [ $nver = "5792-1" ]; then nver="5882-1"; fi; fi
-    if [ "$pkg" = "gyp-svn" ]; then if [ $nver = "1631-1" ]; then nver="1654-1"; fi; fi
+    [ "$pkg" = 'mingw-w64-headers-svn' ] && [ "$nver" = '5792-1' ] && nver='5882-1'
+    [ "$pkg" = 'gyp-svn' ] && [ "$nver" = '1678-1' ] && nver='1694-1'
     
     if [ "$curver" != $nver ]; then
       echo "updating $pkg from $curver to $nver" | tee -a $mainlog
@@ -152,7 +155,7 @@ create_compilejobs() {
     buildlog="$builddir/$build/$pkg/$pkg-build.log"
     $normal_user mkdir -p "$builddir/$build"
     pushd "$builddir/$build"
-      if [ "${#buildlist[@]}" -gt 1 ]; then echo "package build job: ${buildlist[@]}" | tee -a $mainlog $buildlog; fi
+      [ "${#buildlist[@]}" -gt 1 ] && echo "package build job: ${buildlist[@]}" | tee -a $mainlog $buildlog
       compile "${buildlist[@]}"
       # create compile log
       $normal_user tar -czf "$builddir/${build}.log.tar.gz" */*.log

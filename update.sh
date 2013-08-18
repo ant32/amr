@@ -34,6 +34,16 @@ compile() {
     pushd $pkg
       # install dependencies
       install_deps
+      # fix download paths
+      [[ "$pkg" = *"qt5"* ]] && \
+          sed -e "s|releases.qt-project.org/qt5/|download.qt-project.org/archive/qt/5.0/|g" -i PKGBUILD
+      [ "$pkg" = 'mingw-w64-sdl2' ] && sed -e "s|.org/tmp/release|.org/release|g" -i PKGBUILD
+      [[ "$pkg" = 'mingw-w64-sdl2_'* ]] && sed -e "s|.org/tmp/|.org/projects/|g" -i PKGBUILD
+      [ "$pkg" = 'mingw-w64-sdl2' ] && sed -e "s|ffb0f2115b3aaee9f3150301fdd680cd|beec89afb6edcc6f0abc4114f2e6bcf7|g" -i PKGBUILD
+      [ "$pkg" = 'mingw-w64-sdl2_image' ] && sed -e "s|c8fc8b5e851c60d57a767ab7d47fcce7|fb399c8386fb3248f1b33cfe81bdf92b|g" -i PKGBUILD
+      [ "$pkg" = 'mingw-w64-sdl2_mixer' ] && sed -e "s|4c85cdc7b6d162afb918aed626436109|65f6d80df073a1fb3bb537fbda031b50|g" -i PKGBUILD
+      [ "$pkg" = 'mingw-w64-sdl2_net' ] && sed -e "s|b6ab0e8665344ed5e62f95147395b2a4|83bcd0e67796b81b35b08a014c677200|g" -i PKGBUILD
+      [ "$pkg" = 'mingw-w64-sdl2_ttf' ] && sed -e "s|a0925e117cc5f0fb7cf2a66c7968c117|79787216b56cb4707f39d538f2225e00|g" -i PKGBUILD
       # compile package
       $normal_user makepkg --noconfirm -L -c
       # since our space is limited we'll remove src and pkg directories

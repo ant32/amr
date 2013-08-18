@@ -181,4 +181,8 @@ mingw-w64-libsquish
 innoextract
 mingw-w64-nvidia-cg-toolkit
 mingw-w64-csfml
+mingw-w64-confuse
+mingw-w64-libusbx
+mingw-w64-libftdi1
+mingw-w64-qwt
 

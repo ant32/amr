@@ -44,6 +44,10 @@ compile() {
       [ "$pkg" = 'mingw-w64-sdl2_mixer' ] && sed -e "s|4c85cdc7b6d162afb918aed626436109|65f6d80df073a1fb3bb537fbda031b50|g" -i PKGBUILD
       [ "$pkg" = 'mingw-w64-sdl2_net' ] && sed -e "s|b6ab0e8665344ed5e62f95147395b2a4|83bcd0e67796b81b35b08a014c677200|g" -i PKGBUILD
       [ "$pkg" = 'mingw-w64-sdl2_ttf' ] && sed -e "s|a0925e117cc5f0fb7cf2a66c7968c117|79787216b56cb4707f39d538f2225e00|g" -i PKGBUILD
+      # qt5-static fails with a missing folder
+      [ "$pkg" = 'mingw-w64-qt5-qtbase-static' ] && sed '/# Move the static/ a\
+    mkdir -p ${pkgdir}/usr/i686-w64-mingw32/lib\
+    mkdir -p ${pkgdir}/usr/x86_64-w64-mingw32/lib' -i PKGBUILD
       # compile package
       $normal_user makepkg --noconfirm -L -c
       # since our space is limited we'll remove src and pkg directories

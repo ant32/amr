@@ -35,6 +35,8 @@ compile() {
       # install dependencies
       install_deps
       # fix download paths
+      [ "$pkg" = 'mingw-w64-crt-svn' ] && \
+          sed -e "s|mingw-w64.svn.sourceforge.net/svnroot/mingw-w64|svn.code.sf.net/p/mingw-w64/code|g" -i PKGBUILD
       [[ "$pkg" = *"qt5"* ]] && \
           sed -e "s|releases.qt-project.org/qt5/|download.qt-project.org/archive/qt/5.0/|g" -i PKGBUILD
       # qt5-static fails with a missing folder
@@ -130,8 +132,8 @@ create_updatelist() {
     curver=`pacman -Si $pkg | grep Version | tr -d ' ' | sed -e "s/Version://" | head -n 1`
 
     # manual changes to some packages to make them not auto update
-    [ "$pkg" = 'mingw-w64-headers-svn' ] && [ "$nver" = '5792-1' ] && nver='5882-1'
-    [ "$pkg" = 'gyp-svn' ] && [ "$nver" = '1678-1' ] && nver='1694-1'
+    [ "$pkg" = 'mingw-w64-headers-svn' ] && [ "$nver" = '5792-2' ] && nver='6128-1'
+    [ "$pkg" = 'gyp-svn' ] && [ "$nver" = '5727-1' ] && nver=''
     
     if [ "$curver" != $nver ]; then
       echo "updating $pkg from $curver to $nver" | tee -a $mainlog

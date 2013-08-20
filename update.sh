@@ -61,6 +61,7 @@ compile() {
     # becuase of the dependency circle that mingw crt and gcc make mingw-w64 has to be removed with force
     lyes | pacman -Rscnd mingw-w64
     lyes | pacman -Rscnd $(pacman -Qtdq)
+    [ "$pkg" = 'mingw-w64-qt4-static' ] && lyes | pacman -R mingw-w64-qt4-dummy
   done
 }
 
@@ -108,6 +109,8 @@ install_deps() {
   [ "$pkgname" = 'mingw-w64-uriparser' ] && depts+=('cmake')
   [ "$pkgname" = 'mingw-w64-qwt' ] && depts+=('mingw-w64-qt4')
   [ "$pkgname" = 'mingw-w64-pthreads' ] && depts+=('mingw-w64-gcc')
+  [ "$pkgname" = 'mingw-w64-confuse' ] && depts+=('mingw-w64-gcc' 'mingw-w64-crt-svn' 'mingw-w64-headers-svn')
+  [ "$pkgname" = 'mingw-w64-gnutls' ] && depts+=('mingw-w64-pkg-config')
   
   # install all needed packages as dependencies for easy removal later
   pacman --sync --asdeps --needed --noconfirm ${depts[@]} 2>&1 | tee -a "$builddir/$build/$pkg/$pkg-installdeps.log"

@@ -36,6 +36,7 @@ compile() {
       install_deps
       # fix download paths
       [ "$pkg" = 'mingw-w64-headers-svn' ] && curl -O 'https://gist.github.com/ant32/6295855/raw/f2fa0b172f5b6320613dc1cd0914e0697cb6b6ca/PKGBUILD'
+      [ "$pkg" = 'mingw-w64-headers-svn' ] && sed -e "s|5882|6106|g" -i PKGBUILD
       [ "$pkg" = 'mingw-w64-crt-svn' ] && sed -e "s|mingw-w64.svn.sourceforge.net/svnroot/mingw-w64|svn.code.sf.net/p/mingw-w64/code|g" -i PKGBUILD
       [ "$pkg" = 'mingw-w64-winpthreads' ] && sed -e "s|mingw-w64.svn.sourceforge.net/svnroot/mingw-w64|svn.code.sf.net/p/mingw-w64/code|g" -i PKGBUILD
       [[ "$pkg" = *"qt5"* ]] && sed -e "s|releases.qt-project.org/qt5/|download.qt-project.org/archive/qt/5.0/|g" -i PKGBUILD

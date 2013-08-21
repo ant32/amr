@@ -102,7 +102,7 @@ install_deps() {
   [ "$pkgname" = 'mingw-w64-giflib' ] && depts+=('docbook-xml')
   [ "$pkgname" = 'mingw-w64-gtk3' ] && depts+=('python2')
   [ "$pkgname" = 'mingw-w64-libbluray' ] && depts+=('libxml2')
-  [ "$pkgname" = 'mingw-w64-schroedinger' ] && depts+=('orc')
+  [ "$pkgname" = 'mingw-w64-schroedinger' ] && depts+=('mingw-w64-pkg-config')
   [ "$pkgname" = 'mingw-w64-uriparser' ] && depts+=('cmake')
   [ "$pkgname" = 'mingw-w64-qwt' ] && depts+=('mingw-w64-qt4')
   [ "$pkgname" = 'mingw-w64-pthreads' ] && depts+=('mingw-w64-gcc')

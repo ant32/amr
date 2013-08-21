@@ -101,7 +101,6 @@ install_deps() {
   [ "$pkgname" = 'mingw-w64-giflib' ] && depts+=('docbook-xml')
   [ "$pkgname" = 'mingw-w64-sdl_ttf' ] && depts+=('freetype2')
   [ "$pkgname" = 'mingw-w64-sdl2_ttf' ] && depts+=('freetype2')
-  [ "$pkgname" = 'mingw-w64-openjpeg' ] && depts+=('lib32-glibc' 'libtiff')
   [ "$pkgname" = 'mingw-w64-librsvg' ] && depts+=('gdk-pixbuf2')
   [ "$pkgname" = 'mingw-w64-glfw' ] && depts+=('cmake')
   [ "$pkgname" = 'mingw-w64-gtk3' ] && depts+=('python2')

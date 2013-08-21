@@ -35,10 +35,10 @@ compile() {
       # install dependencies
       install_deps
       # fix download paths
-      [ "$pkg" = 'mingw-w64-crt-svn' ] && \
-          sed -e "s|mingw-w64.svn.sourceforge.net/svnroot/mingw-w64|svn.code.sf.net/p/mingw-w64/code|g" -i PKGBUILD
-      [[ "$pkg" = *"qt5"* ]] && \
-          sed -e "s|releases.qt-project.org/qt5/|download.qt-project.org/archive/qt/5.0/|g" -i PKGBUILD
+      [ "$pkg" = 'mingw-w64-headers-svn' ] && curl -O 'https://gist.github.com/ant32/6295855/raw/f2fa0b172f5b6320613dc1cd0914e0697cb6b6ca/PKGBUILD'
+      [ "$pkg" = 'mingw-w64-crt-svn' ] && sed -e "s|mingw-w64.svn.sourceforge.net/svnroot/mingw-w64|svn.code.sf.net/p/mingw-w64/code|g" -i PKGBUILD
+      [ "$pkg" = 'mingw-w64-winpthreads' ] && sed -e "s|mingw-w64.svn.sourceforge.net/svnroot/mingw-w64|svn.code.sf.net/p/mingw-w64/code|g" -i PKGBUILD
+      [[ "$pkg" = *"qt5"* ]] && sed -e "s|releases.qt-project.org/qt5/|download.qt-project.org/archive/qt/5.0/|g" -i PKGBUILD
       # qt5-static fails with a missing folder
       [ "$pkg" = 'mingw-w64-qt5-qtbase-static' ] && sed '/# Move the static/ a\
     mkdir -p ${pkgdir}/usr/i686-w64-mingw32/lib\
@@ -99,18 +99,13 @@ install_deps() {
   # some packages have missing dependencies
   [ "$pkgname" = 'mingw-w64-angleproject' ] && depts+=('mingw-w64-headers-secure' 'mingw-w64-crt-secure')
   [ "$pkgname" = 'mingw-w64-giflib' ] && depts+=('docbook-xml')
-  [ "$pkgname" = 'mingw-w64-sdl_ttf' ] && depts+=('freetype2')
-  [ "$pkgname" = 'mingw-w64-sdl2_ttf' ] && depts+=('freetype2')
-  [ "$pkgname" = 'mingw-w64-librsvg' ] && depts+=('gdk-pixbuf2')
   [ "$pkgname" = 'mingw-w64-glfw' ] && depts+=('cmake')
   [ "$pkgname" = 'mingw-w64-gtk3' ] && depts+=('python2')
   [ "$pkgname" = 'mingw-w64-libbluray' ] && depts+=('libxml2')
   [ "$pkgname" = 'mingw-w64-schroedinger' ] && depts+=('orc')
-  [ "$pkgname" = 'mingw-w64-ffmpeg' ] && depts+=('mingw-w64-pkg-config' )
   [ "$pkgname" = 'mingw-w64-uriparser' ] && depts+=('cmake')
   [ "$pkgname" = 'mingw-w64-qwt' ] && depts+=('mingw-w64-qt4')
   [ "$pkgname" = 'mingw-w64-pthreads' ] && depts+=('mingw-w64-gcc')
-  [ "$pkgname" = 'mingw-w64-confuse' ] && depts+=('mingw-w64-gcc' 'mingw-w64-crt-svn' 'mingw-w64-headers-svn')
   [ "$pkgname" = 'mingw-w64-gnutls' ] && depts+=('mingw-w64-pkg-config')
   
   # install all needed packages as dependencies for easy removal later
@@ -131,8 +126,8 @@ create_updatelist() {
     curver=`pacman -Si $pkg | grep Version | tr -d ' ' | sed -e "s/Version://" | head -n 1`
 
     # manual changes to some packages to make them not auto update
-    [ "$pkg" = 'mingw-w64-headers-svn' ] && [ "$nver" = '5792-2' ] && nver='6128-1'
-    [ "$pkg" = 'gyp-svn' ] && [ "$nver" = '5727-1' ] && nver=''
+    [ "$pkg" = 'mingw-w64-headers-svn' ] && [ "$nver" = '5792-2' ] && nver='5882-1'
+    [ "$pkg" = 'gyp-svn' ] && [ "$nver" = '1678-1' ] && nver='1700-1'
     
     if [ "$curver" != $nver ]; then
       echo "updating $pkg from $curver to $nver" | tee -a $mainlog

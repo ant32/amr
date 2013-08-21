@@ -101,7 +101,7 @@ install_deps() {
   [ "$pkgname" = 'mingw-w64-angleproject' ] && depts+=('mingw-w64-headers-secure' 'mingw-w64-crt-secure')
   [ "$pkgname" = 'mingw-w64-giflib' ] && depts+=('docbook-xml')
   [ "$pkgname" = 'mingw-w64-gtk3' ] && depts+=('python2')
-  [ "$pkgname" = 'mingw-w64-libbluray' ] && depts+=('libxml2')
+  [ "$pkgname" = 'mingw-w64-libbluray' ] && depts+=('mingw-w64-pkg-config')
   [ "$pkgname" = 'mingw-w64-schroedinger' ] && depts+=('mingw-w64-pkg-config')
   [ "$pkgname" = 'mingw-w64-uriparser' ] && depts+=('cmake')
   [ "$pkgname" = 'mingw-w64-qwt' ] && depts+=('mingw-w64-qt4')

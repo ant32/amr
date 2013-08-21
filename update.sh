@@ -99,7 +99,6 @@ install_deps() {
   # some packages have missing dependencies
   [ "$pkgname" = 'mingw-w64-angleproject' ] && depts+=('mingw-w64-headers-secure' 'mingw-w64-crt-secure')
   [ "$pkgname" = 'mingw-w64-giflib' ] && depts+=('docbook-xml')
-  [ "$pkgname" = 'mingw-w64-glfw' ] && depts+=('cmake')
   [ "$pkgname" = 'mingw-w64-gtk3' ] && depts+=('python2')
   [ "$pkgname" = 'mingw-w64-libbluray' ] && depts+=('libxml2')
   [ "$pkgname" = 'mingw-w64-schroedinger' ] && depts+=('orc')

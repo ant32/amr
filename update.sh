@@ -2,11 +2,11 @@
 # Entry script to use with a cron job to automaticaly compile packages when updated.
 
 # update variables
-normal_user="sudo -u amr"
-builddir="/build"
+normal_user='sudo -u amr'
+builddir='/build'
 pkgbuildsdir="$builddir/pkgbuilds"
-test_repository="/srv/http/archlinux/mingw-w64-testing/os/x86_64"
-mainlog="/build/update.log"
+test_repository='/srv/http/archlinux/mingw-w64-testing/os/x86_64'
+mainlog='/build/update.log'
 
 # my yes function that is limited to 10 rounds
 lyes() {
@@ -31,15 +31,21 @@ compile() {
     # download package
     $normal_user curl -O https://aur.archlinux.org/packages/${pkg:0:2}/$pkg/$pkg.tar.gz
     $normal_user tar xzvf $pkg.tar.gz
+    
+    # compress some packages while building to save disk space
+    [ "$pkg" = 'mingw-w64-qt4-debug' ] && fusecompress "$PWD/$pkg"
+    
     pushd $pkg
       # install dependencies
       install_deps
       # fix download paths
       [ "$pkg" = 'mingw-w64-headers-svn' ] && curl -O 'https://gist.github.com/ant32/6295855/raw/f2fa0b172f5b6320613dc1cd0914e0697cb6b6ca/PKGBUILD'
-      [ "$pkg" = 'mingw-w64-headers-svn' ] && sed -e "s|5882|6106|g" -i PKGBUILD
+      [ "$pkg" = 'mingw-w64-headers-svn' ] && sed -e "s|5882|5969|g" -i PKGBUILD
       [ "$pkg" = 'mingw-w64-crt-svn' ] && sed -e "s|mingw-w64.svn.sourceforge.net/svnroot/mingw-w64|svn.code.sf.net/p/mingw-w64/code|g" -i PKGBUILD
       [ "$pkg" = 'mingw-w64-winpthreads' ] && sed -e "s|mingw-w64.svn.sourceforge.net/svnroot/mingw-w64|svn.code.sf.net/p/mingw-w64/code|g" -i PKGBUILD
       [[ "$pkg" = *"qt5"* ]] && sed -e "s|releases.qt-project.org/qt5/|download.qt-project.org/archive/qt/5.0/|g" -i PKGBUILD
+      [ "$pkg" = 'mingw-w64-gettext' ] && sed -e "s|0.18.2.1|0.18.3.1|g" -i PKGBUILD
+      [ "$pkg" = 'mingw-w64-gettext' ] && sed -e "s|034c8103b14654ebd300fadac44d6f14|3fc808f7d25487fc72b5759df7419e02|g" -i PKGBUILD
       # qt5-static fails with a missing folder
       [ "$pkg" = 'mingw-w64-qt5-qtbase-static' ] && sed '/# Move the static/ a\
     mkdir -p ${pkgdir}/usr/i686-w64-mingw32/lib\
@@ -126,8 +132,9 @@ create_updatelist() {
     curver=`pacman -Si $pkg | grep Version | tr -d ' ' | sed -e "s/Version://" | head -n 1`
 
     # manual changes to some packages to make them not auto update
-    [ "$pkg" = 'mingw-w64-headers-svn' ] && [ "$nver" = '5792-2' ] && nver='5882-1'
-    [ "$pkg" = 'gyp-svn' ] && [ "$nver" = '1678-1' ] && nver='1700-1'
+    [ "$pkg" = 'mingw-w64-headers-svn' ] && [ "$nver" = '5792-2' ] && nver='5969-1'
+    [ "$pkg" = 'gyp-svn' ] && [ "$nver" = '1678-1' ] && nver='1701-1'
+    [ "$pkg" = 'mingw-w64-gettext' ] && [ "$nver" = '0.18.2.1-1' ] && nver='0.18.3.1-1'
     
     if [ "$curver" != $nver ]; then
       echo "updating $pkg from $curver to $nver" | tee -a $mainlog

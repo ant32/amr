@@ -1,5 +1,5 @@
 # script
-net_Interface='ens0'
+net_Interface='enp0s3'
 net_IP='dhcp'
 net_Address='10.1.0.31/24'
 net_Gateway='10.1.0.1'

@@ -110,13 +110,9 @@ install_deps() {
   # some packages have missing dependencies
   [ "$pkgname" = 'mingw-w64-angleproject' ] && depts+=('mingw-w64-headers-secure' 'mingw-w64-crt-secure')
   [ "$pkgname" = 'mingw-w64-giflib' ] && depts+=('docbook-xml')
-  [ "$pkgname" = 'mingw-w64-gtk3' ] && depts+=('python2')
-  [ "$pkgname" = 'mingw-w64-libbluray' ] && depts+=('mingw-w64-pkg-config')
-  [ "$pkgname" = 'mingw-w64-schroedinger' ] && depts+=('mingw-w64-pkg-config')
   [ "$pkgname" = 'mingw-w64-uriparser' ] && depts+=('cmake')
   [ "$pkgname" = 'mingw-w64-qwt' ] && depts+=('mingw-w64-qt4')
   [ "$pkgname" = 'mingw-w64-pthreads' ] && depts+=('mingw-w64-gcc')
-  [ "$pkgname" = 'mingw-w64-gnutls' ] && depts+=('mingw-w64-pkg-config')
   
   # install all needed packages as dependencies for easy removal later
   pacman --sync --asdeps --needed --noconfirm ${depts[@]} 2>&1 | tee -a "$builddir/$build/$pkg/$pkg-installdeps.log"

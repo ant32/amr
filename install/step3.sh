@@ -1,5 +1,3 @@
-[ "$PWD" = '/etc/profile.d/' ] && deletelater=true
-
 pacman -Syu --ignore filesystem,bash --noconfirm
 pacman -S bash --noconfirm
 pacman -Su --noconfirm
@@ -50,5 +48,3 @@ chown -R amr /build /srv/http/archlinux
 
 pacman -S fusecompress-1 screen --noconfirm
 screen ./update.sh
-
-[ $deletelater ] && rm /etc/profile.d/step3.sh

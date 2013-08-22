@@ -64,6 +64,10 @@ compile() {
         echo "$pkg failed to build" | tee -a $mainlog $buildlog
       fi
     popd
+    
+    # unmount so it can be deleted
+    [ "$pkg" = 'mingw-w64-qt4-debug' ] && fusermount -u /"$PWD/$pkg"
+    
     # uninstall no longer needed packages (this has to be done cause later when installing
     # dependencies and there already is a package that provides something it'll sometimes not
     # install the correct packages)

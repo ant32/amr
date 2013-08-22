@@ -6,3 +6,5 @@ genfstab -p /mnt >> /mnt/etc/fstab
 echo amr > /mnt/etc/hostname
 curl https://raw.github.com/ant32/amr/master/install/step2.sh > /mnt/root/step2.sh
 arch-chroot /mnt 'bash /root/step2.sh'
+umount /mnt
+reboot

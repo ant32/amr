@@ -29,3 +29,5 @@ DNS=('$net_DNS')
 " > /etc/netctl/$net_Interface
 fi
 netctl enable $net_Interface
+
+curl https://raw.github.com/ant32/amr/master/install/step3.sh > /etc/profile.d/step3.sh

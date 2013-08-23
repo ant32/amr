@@ -132,7 +132,7 @@ create_updatelist() {
 
     # manual changes to some packages to make them not auto update
     [ "$pkg" = 'mingw-w64-headers-svn' ] && [ "$nver" = '5792-2' ] && nver='5969-1'
-    [ "$pkg" = 'gyp-svn' ] && [ "$nver" = '1678-1' ] && nver='1701-1'
+    [ "$pkg" = 'gyp-svn' ] && [ "$nver" = '1678-1' ] && nver='1702-1'
     #[ "$pkg" = 'mingw-w64-gettext' ] && [ "$nver" = '0.18.2.1-1' ] && nver='0.18.3.1-1'
     
     if [ "$curver" != $nver ]; then

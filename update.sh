@@ -39,7 +39,7 @@ compile() {
       # install dependencies
       install_deps
       # fix download paths
-      [ "$pkg" = 'mingw-w64-headers-svn' ] && curl -O 'https://gist.github.com/ant32/6295855/raw/f2fa0b172f5b6320613dc1cd0914e0697cb6b6ca/PKGBUILD'
+      [ "$pkg" = 'mingw-w64-headers-svn' ] && curl -O 'https://gist.github.com/ant32/6295855/raw/d35692058f8c3941144b01cbf416e5c30c513853/PKGBUILD'
       #[ "$pkg" = 'mingw-w64-headers-svn' ] && sed -e "s|5882|5904|g" -i PKGBUILD
       [ "$pkg" = 'mingw-w64-crt-svn' ] && sed -e 's|./ ${_svnmod}|./ ${_svnmod} --revision 5969|g' -i PKGBUILD
       [ "$pkg" = 'mingw-w64-crt-svn' ] && sed -e 's|mingw-w64.svn.sourceforge.net/svnroot/mingw-w64|svn.code.sf.net/p/mingw-w64/code|g' -i PKGBUILD

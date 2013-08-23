@@ -33,7 +33,7 @@ compile() {
     $normal_user tar xzvf $pkg.tar.gz
     
     # compress some packages while building to save disk space
-    [ "$pkg" = 'mingw-w64-qt4-debug' ] && fusecompress "$PWD/$pkg"
+    [ "$pkg" = 'mingw-w64-qt4-debug' ] && fusecompress "$PWD/$pkg" && compress_list+=("$PWD/$pkg")
     
     pushd $pkg
       # install dependencies
@@ -66,9 +66,6 @@ compile() {
         echo "$pkg failed to build" | tee -a $mainlog $buildlog
       fi
     popd
-    
-    # unmount so it can be deleted
-    [ "$pkg" = 'mingw-w64-qt4-debug' ] && fusermount -u /"$PWD/$pkg"
     
     # uninstall no longer needed packages (this has to be done cause later when installing
     # dependencies and there already is a package that provides something it'll sometimes not
@@ -174,6 +171,12 @@ create_compilejobs() {
       # create compile log
       $normal_user tar -czf "$builddir/${build}.log.tar.gz" */*.log
     popd
+    
+    # unmount compressed directories so they can be deleted
+    for compressed_dir in ${compress_list[@]}; do
+      fusermount -u "$compressed_dir"
+    done
+    
     $normal_user rm -fR "$builddir/$build"
   done
 }

@@ -43,7 +43,7 @@ compile() {
       #[ "$pkg" = 'mingw-w64-headers-svn' ] && sed -e "s|5882|5904|g" -i PKGBUILD
       [ "$pkg" = 'mingw-w64-crt-svn' ] && sed -e 's|./ ${_svnmod}|./ ${_svnmod} --revision 5969|g' -i PKGBUILD
       [ "$pkg" = 'mingw-w64-crt-svn' ] && sed -e 's|mingw-w64.svn.sourceforge.net/svnroot/mingw-w64|svn.code.sf.net/p/mingw-w64/code|g' -i PKGBUILD
-      [ "$pkg" = 'mingw-w64-winpthreads' ] && sed -e 's|mingw-w64.svn.sourceforge.net/svnroot/mingw-w64|svn.code.sf.net/p/mingw-w64/code/mingw-w64-libraries|g' -i PKGBUILD
+      [ "$pkg" = 'mingw-w64-winpthreads' ] && sed -e 's|mingw-w64.svn.sourceforge.net/svnroot/mingw-w64/experimental|svn.code.sf.net/p/mingw-w64/code/mingw-w64-libraries|g' -i PKGBUILD
       [ "$pkg" = 'mingw-w64-winpthreads' ] && sed -e 's|_svnrev=5741|_svnrev=5969|g' -i PKGBUILD
       [[ "$pkg" = *"qt5"* ]] && sed -e "s|releases.qt-project.org/qt5/|download.qt-project.org/archive/qt/5.0/|g" -i PKGBUILD
       #[ "$pkg" = 'mingw-w64-gettext' ] && sed -e "s|0.18.2.1|0.18.3.1|g" -i PKGBUILD

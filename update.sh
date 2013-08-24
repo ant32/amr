@@ -33,7 +33,7 @@ compile() {
     $normal_user tar xzvf $pkg.tar.gz
     
     # compress some packages while building to save disk space
-    [ "$pkg" = 'mingw-w64-qt4-debug' ] && fusecompress "$PWD/$pkg" && compress_list+=("$PWD/$pkg")
+    [[ "$pkg" = 'mingw-w64-qt4'* ]] && fusecompress "$PWD/$pkg" && compress_list+=("$PWD/$pkg")
     
     pushd $pkg
       # install dependencies

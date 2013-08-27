@@ -3,11 +3,14 @@ amr - Arch Linux MinGW-w64 Repository
 
 This project contains the code that is used to automatically recompile mingw packages.
 
-Package names in buildlist.txt should be in order that they would need to be compiled if compiled from scratch meaning that dependencies of a package should come first in the list.
+Package names in buildlist.txt should be in order that they would need to be compiled if
+compiled from scratch meaning that dependencies of a package should come first in the list.
 
-This code is currently extremely dangerous. It has been designed to run in a virtual machine with no inmportant information on it.
+This code is extremely dangerous. It has been designed to run in a virtual machine or chroot
+with no inmportant or personal/confidential information on it.
 
-This repository is to be used with an up to date 64bit archlinux instalation. To use this repository add the following lines to /etc/pacman.conf
+This repository is to be used with an up to date 64bit archlinux instalation. To use this
+repository add the following lines to /etc/pacman.conf
 
     [mingw-w64]
     SigLevel = Optional TrustAll
@@ -20,32 +23,30 @@ You may wish to use it to help with the testing process.
     SigLevel = Optional TrustAll
     Server = http://arch.linuxx.org/archlinux/$repo/os/$arch
 
-Virtual Machine for these scripts
+Virtual Machine / chroot for these scripts
 --------
 
-1 install packages packes `pacman -S base base-devel sudo openssh`  
-2 enable and start ssd `systemctl enable sshd && systemctl start sshd`  
-3 create the build user `useradd -m amr`  
-4 create folders `mkdir -p /build/scripts /srv/http/archlinux/mingw-w64{-testing,}/os/x86_64`  
-5 allow build user `chown -R amr /build /srv/http/archlinux`  
-6 build and place dummy package https://aur.archlinux.org/packages/dummy/ into `/build/scripts` and `/srv/http/archlinux/mingw-w64{-testing,}/os/x86_64`  
-7 copy and `buildlist.txt update.sh repo_update.sh` into `/build/scripts`.  
-8 Add the following to the end of /etc/pacman.conf
+To use these scripts I've created helper scripts to get you up and running fast. The first
+two scripts are to create a Virtual machine. The first script will farmat the hard drive
+and download/execute the second script. You'll then need to reboot and run the third script.
+If you buy a virtual machine from digital ocean you only need to execute the third script.
 
-    [mingw-w64]
-    SigLevel = Optional TrustAll
-    Server = file:///srv/http/archlinux/$repo/os/$arch
-    [mingw-w64-testing]
-    SigLevel = Optional TrustAll
-    Server = file:///srv/http/archlinux/$repo/os/$arch
+My recommended method now is to build in a chroot. All you need is to create a chroot with
+only base-devel installed in it. To do this you'll need ot install devtools
+`pacman -S devtools`. Next execute `mkarchroot chrootdir base-devel` where chrootdir
+is the directory where you want to have your chroot directory. Root into your newly created
+chroot `arch-chroot chrootdir`. Download the script
+`curl https://raw.github.com/ant32/amr/master/install/chroot.sh > /root/setup.sh`
+and execute it `bash /root/setup.sh`. You are then ready to execute the build script wich
+the last successful build for me took aproximatly 48 hours. `/build/scripts/update.sh`
 
-9 also uncomment the following two lines in `/etc/pacman.conf`
-
-    [multilib]
-    Include = /etc/pacman.d/mirrorlist
-
-10 execute `/build/scripts/repo_update.sh`  
-11 and you're ready to use `update.sh`  
+Once I have more spare time I want to rewrite the scripts a bit to more closely use
+https://wiki.archlinux.org/index.php/DeveloperWiki:Building_in_a_Clean_Chroot. I also
+want to look into what yaourt uses which I think is pkg-query to try simplify and speed
+up the dependency resolution etc. I have dreamed of creating something like launchpad for
+Arch Linux. Also I would really like to contribute in a project where we'd freeze Arch
+Linux every 2 years and create a 5 year stable version to use in servers and company
+workstations.
 
 Web file server
 --------

@@ -33,7 +33,11 @@ compile() {
     $normal_user tar xzvf $pkg.tar.gz
     
     # compress some packages while building to save disk space
-    [[ "$pkg" = 'mingw-w64-qt4'* ]] && fusecompress "$PWD/$pkg" && compress_list+=("$PWD/$pkg")
+    # This is not really a solution since it causes other strange errors at times
+    # we'll ceck if there is less then 20GB available for now.
+    if [ $(($(stat -f --format="%a*%S" .))) -lt 20000000000 ]; then
+      [[ "$pkg" = 'mingw-w64-qt4'* ]] && fusecompress "$PWD/$pkg" && compress_list+=("$PWD/$pkg")
+    fi
     
     pushd $pkg
       # install dependencies
@@ -46,8 +50,9 @@ compile() {
       [ "$pkg" = 'mingw-w64-winpthreads' ] && sed -e 's|mingw-w64.svn.sourceforge.net/svnroot/mingw-w64/experimental|svn.code.sf.net/p/mingw-w64/code/trunk/mingw-w64-libraries|g' -i PKGBUILD
       [ "$pkg" = 'mingw-w64-winpthreads' ] && sed -e 's|_svnrev=5741|_svnrev=5969|g' -i PKGBUILD
       [[ "$pkg" = *"qt5"* ]] && sed -e "s|releases.qt-project.org/qt5/|download.qt-project.org/archive/qt/5.0/|g" -i PKGBUILD
-      #[ "$pkg" = 'mingw-w64-gettext' ] && sed -e "s|0.18.2.1|0.18.3.1|g" -i PKGBUILD
-      #[ "$pkg" = 'mingw-w64-gettext' ] && sed -e "s|034c8103b14654ebd300fadac44d6f14|3fc808f7d25487fc72b5759df7419e02|g" -i PKGBUILD
+      # the older gettext does not compile with newer mingw
+      [ "$pkg" = 'mingw-w64-gettext' ] && sed -e "s|0.18.2.1|0.18.3.1|g" -i PKGBUILD
+      [ "$pkg" = 'mingw-w64-gettext' ] && sed -e "s|034c8103b14654ebd300fadac44d6f14|3fc808f7d25487fc72b5759df7419e02|g" -i PKGBUILD
       # qt5-static fails with a missing folder
       [ "$pkg" = 'mingw-w64-qt5-qtbase-static' ] && sed '/# Move the static/ a\
     mkdir -p ${pkgdir}/usr/i686-w64-mingw32/lib\
@@ -133,7 +138,7 @@ create_updatelist() {
     # manual changes to some packages to make them not auto update
     [ "$pkg" = 'mingw-w64-headers-svn' ] && [ "$nver" = '5792-2' ] && nver='5969-1'
     [ "$pkg" = 'gyp-svn' ] && [ "$nver" = '1678-1' ] && nver='1702-1'
-    #[ "$pkg" = 'mingw-w64-gettext' ] && [ "$nver" = '0.18.2.1-1' ] && nver='0.18.3.1-1'
+    [ "$pkg" = 'mingw-w64-gettext' ] && [ "$nver" = '0.18.2.1-1' ] && nver='0.18.3.1-1'
     
     if [ "$curver" != $nver ]; then
       echo "updating $pkg from $curver to $nver" | tee -a $mainlog
@@ -176,6 +181,7 @@ create_compilejobs() {
     for compressed_dir in ${compress_list[@]}; do
       fusermount -u "$compressed_dir"
     done
+    unset compress_list
     
     $normal_user rm -fR "$builddir/$build"
   done
@@ -183,7 +189,7 @@ create_compilejobs() {
 
 
 # check for lock file and create one if it does not exsist
-if [ ! -f update.lock ]; then
+if [ ! -f "$builddir/update.lock" ]; then
 
   # create lock
   $normal_user touch "$builddir/update.lock"

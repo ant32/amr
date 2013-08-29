@@ -45,6 +45,9 @@ mingw-w64-qt5-script
 mingw-w64-qt5-tools
 mingw-w64-qt5-quick1
 mingw-w64-qt5-serialport
+mingw-w64-qt5-translations
+mingw-w64-qt5-sensors
+mingw-w64-qt5-imageformats
 mingw-w64-quazip-qt4
 mingw-w64-quazip-qt5
 mingw-w64-atk

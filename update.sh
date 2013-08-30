@@ -115,7 +115,6 @@ install_deps() {
   [ "$pkgname" = 'mingw-w64-angleproject' ] && depts+=('mingw-w64-headers-secure' 'mingw-w64-crt-secure')
   [ "$pkgname" = 'mingw-w64-giflib' ] && depts+=('docbook-xml')
   [ "$pkgname" = 'mingw-w64-uriparser' ] && depts+=('cmake')
-  [ "$pkgname" = 'mingw-w64-qwt' ] && depts+=('mingw-w64-qt4')
   [ "$pkgname" = 'mingw-w64-pthreads' ] && depts+=('mingw-w64-gcc')
   
   # install all needed packages as dependencies for easy removal later
@@ -137,7 +136,7 @@ create_updatelist() {
 
     # manual changes to some packages to make them not auto update
     [ "$pkg" = 'mingw-w64-headers-svn' ] && [ "$nver" = '5792-2' ] && nver='5969-1'
-    [ "$pkg" = 'gyp-svn' ] && [ "$nver" = '1678-1' ] && nver='1702-1'
+    [ "$pkg" = 'gyp-svn' ] && [ "$nver" = '1678-1' ] && nver='1707-1'
     [ "$pkg" = 'mingw-w64-gettext' ] && [ "$nver" = '0.18.2.1-1' ] && nver='0.18.3.1-1'
     
     if [ "$curver" != $nver ]; then

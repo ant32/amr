@@ -49,14 +49,9 @@ compile() {
       [ "$pkg" = 'mingw-w64-crt-svn' ] && sed -e 's|mingw-w64.svn.sourceforge.net/svnroot/mingw-w64|svn.code.sf.net/p/mingw-w64/code|g' -i PKGBUILD
       [ "$pkg" = 'mingw-w64-winpthreads' ] && sed -e 's|mingw-w64.svn.sourceforge.net/svnroot/mingw-w64/experimental|svn.code.sf.net/p/mingw-w64/code/trunk/mingw-w64-libraries|g' -i PKGBUILD
       [ "$pkg" = 'mingw-w64-winpthreads' ] && sed -e 's|_svnrev=5741|_svnrev=5969|g' -i PKGBUILD
-      [[ "$pkg" = *"qt5"* ]] && sed -e "s|releases.qt-project.org/qt5/|download.qt-project.org/archive/qt/5.0/|g" -i PKGBUILD
       # the older gettext does not compile with newer mingw
       [ "$pkg" = 'mingw-w64-gettext' ] && sed -e "s|0.18.2.1|0.18.3.1|g" -i PKGBUILD
       [ "$pkg" = 'mingw-w64-gettext' ] && sed -e "s|034c8103b14654ebd300fadac44d6f14|3fc808f7d25487fc72b5759df7419e02|g" -i PKGBUILD
-      # qt5-static fails with a missing folder
-      [ "$pkg" = 'mingw-w64-qt5-qtbase-static' ] && sed '/# Move the static/ a\
-    mkdir -p ${pkgdir}/usr/i686-w64-mingw32/lib\
-    mkdir -p ${pkgdir}/usr/x86_64-w64-mingw32/lib' -i PKGBUILD
       # compile package
       $normal_user makepkg --noconfirm -L -c
       # since our space is limited we'll remove src and pkg directories
@@ -101,7 +96,7 @@ install_deps() {
     [ "${ndept}" = 'mingw-w64-crt' ] && ndept='mingw-w64-crt-svn'
     [ "${ndept}" = 'mingw-w64-headers' ] && ndept='mingw-w64-headers-svn'
     # qt5 package require a patched gcc to build
-    [[ "${pkgname}" = *"qt5"* ]] && [ "${ndept}" = 'mingw-w64-gcc' ] && ndept='mingw-w64-gcc-qt5'
+    [[ "${pkgname}" = 'mingw-w64-qt5-base'* ]] && [ "${ndept}" = 'mingw-w64-gcc' ] && ndept='mingw-w64-gcc-qt5'
     # mingw-w64-xmms and mingw-w64-qt4-dummy don't exsist
     [ "${ndept}" = 'mingw-w64-xmms' ] && unset ndept
     [ "${ndept}" = 'mingw-w64-qt4-dummy' ] && unset ndept
@@ -116,6 +111,8 @@ install_deps() {
   [ "$pkgname" = 'mingw-w64-giflib' ] && depts+=('docbook-xml')
   [ "$pkgname" = 'mingw-w64-uriparser' ] && depts+=('cmake')
   [ "$pkgname" = 'mingw-w64-pthreads' ] && depts+=('mingw-w64-gcc')
+  [[ "${pkgname}" = 'mingw-w64-qt5-base'* ]] && depts+=('mingw-w64-headers-secure')
+  [[ "${pkgname}" != 'mingw-w64-qt5-base'* ]] && [[ "${pkgname}" = 'mingw-w64-qt5-'* ]] && depts+=('mingw-w64-crt-svn')
   
   # install all needed packages as dependencies for easy removal later
   pacman --sync --asdeps --needed --noconfirm ${depts[@]} 2>&1 | tee -a "$builddir/$build/$pkg/$pkg-installdeps.log"

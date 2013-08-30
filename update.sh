@@ -92,6 +92,7 @@ install_deps() {
 
     # secure crt should be build with secure headers
     [ "${pkgname}" = 'mingw-w64-crt-secure' ] && [ "${ndept}" = "mingw-w64-headers" ] && ndept='mingw-w64-headers-secure'
+    [[ "${pkgname}" = 'mingw-w64-qt5-base'* ]] && [ "${ndept}" = 'mingw-w64-crt' ] && ndept='mingw-w64-crt-secure'
     # there is currenty a problem with the latest stable mingw-w64 crt and headers
     [ "${ndept}" = 'mingw-w64-crt' ] && ndept='mingw-w64-crt-svn'
     [ "${ndept}" = 'mingw-w64-headers' ] && ndept='mingw-w64-headers-svn'

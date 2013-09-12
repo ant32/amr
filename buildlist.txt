@@ -192,4 +192,8 @@ mingw-w64-libusbx
 mingw-w64-libftdi1
 mingw-w64-qwt
 mingw-w64-nlopt
+mingw-w64-libsvm
+binfmt-support
+binfmt-wine
+mingw-w64-testsuite
 

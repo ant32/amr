@@ -23,6 +23,7 @@ mingw-w64-readline
 mingw-w64-sqlite3
 mingw-w64-gettext
 mingw-w64-libtiff
+mingw-w64-pcre
 mingw-w64-libxml2
 mingw-w64-glib2
 mingw-w64-dbus
@@ -115,7 +116,6 @@ mingw-w64-ruby
 mingw-w64-llvm-libs
 mingw-w64-ode
 mingw-w64-openjpeg
-mingw-w64-pcre
 mingw-w64-portaudio
 mingw-w64-protobuf
 mingw-w64-sdl

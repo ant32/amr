@@ -46,7 +46,7 @@ before_build() {
 
   # mingw-w64-glib2 is outdated and the older version no longer builds
   [ "$npkg" = 'mingw-w64-glib2 2.37.1-1' ] && pushd .. && curl 'http://userpage.fu-berlin.de/mokaga/mingw-w64-glib2-2.37.7-1.src.tar.gz' | $normal_user tar xz && popd
-  [ "$npkg" = 'mingw-w64-gcc 4.8.1-3' ]pushd .. && curl 'https://dl.dropboxusercontent.com/u/33784287/aur/mingw-w64-gcc-4.8.1-3.src.tar.gz' | $normal_user tar xz && popd
+  [ "$npkg" = 'mingw-w64-gcc 4.8.1-3' ] && pushd .. && curl 'https://dl.dropboxusercontent.com/u/33784287/aur/mingw-w64-gcc-4.8.1-3.src.tar.gz' | $normal_user tar xz && popd
 }
 
 

@@ -29,14 +29,14 @@ mingw-w64-glib2
 mingw-w64-dbus
 mingw-w64-libmariadbclient
 mingw-w64-postgresql-libs
-mingw-w64-headers-secure
-mingw-w64-crt-secure
+#mingw-w64-headers-secure
+#mingw-w64-crt-secure
 gyp-svn
 mingw-w64-angleproject
 mingw-w64-qt4
 mingw-w64-qt4-static
 mingw-w64-qt4-debug
-mingw-w64-gcc-qt5
+#mingw-w64-gcc-qt5
 mingw-w64-qt5-base
 mingw-w64-qt5-base-static
 mingw-w64-qt5-jsbackend

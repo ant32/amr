@@ -1,12 +1,24 @@
 #!/usr/bin/bash
+
+# CHANGES TO ORIGINAL UPDATE.SH
+# I pulled out all modifications to packages and put them in the beginning. In the future
+# I might put he changes in a seperate file and just source it. I would like to redesign
+# the script so it would create a clean chroot to build each package but that'd require
+# more space on the VM from digitalocean that I have. I also made some changes so packages
+# aren't built multiple times.
+
 # Entry script to use with a cron job to automaticaly compile packages when updated.
+
 
 # update variables
 normal_user='sudo -u amr'
 builddir='/build'
+scriptdir='/scripts'
+logdir='/srv/http/logs'
 pkgbuildsdir="$builddir/pkgbuilds"
 test_repository='/srv/http/archlinux/mingw-w64-testing/os/x86_64'
-mainlog='/build/update.log'
+mainlog="$logdir/update.log"
+
 
 # my yes function that is limited to 10 rounds
 lyes() {
@@ -18,40 +30,112 @@ lyes() {
 }
 
 
-# compile function
-compile() {
-  for pkg in "$@"; do
-    echo "building $pkg" | tee -a $mainlog $buildlog
+before_build() {
+  npkg="$pkgname $pkgver-$pkgrel"
+
+  # compress some packages while building to save disk space
+  # This is not really a solution since it causes other strange errors at times
+  # we'll check if there is less then 20GB available for now.
+  if [ $(($(stat -f --format="%a*%S" .))) -lt 20000000000 ]; then
+    [[ "$pkg" = 'mingw-w64-qt4'* ]] && fusecompress "$PWD" && compressed_dir="$PWD"
+  fi
+
+  # the older gettext does not compile with newer mingw
+  [ "$npkg" = 'mingw-w64-gettext 0.18.2.1-1' ] && sed -e "s|0.18.2.1|0.18.3.1|g" -i PKGBUILD
+  [ "$npkg" = 'mingw-w64-gettext 0.18.2.1-1' ] && sed -e "s|034c8103b14654ebd300fadac44d6f14|3fc808f7d25487fc72b5759df7419e02|g" -i PKGBUILD
+
+  # mingw-w64-glib2 is outdated and the older version no longer builds
+  [ "$npkg" = 'mingw-w64-glib2 2.37.1-1' ] && pushd .. && curl 'http://userpage.fu-berlin.de/mokaga/mingw-w64-glib2-2.37.7-1.src.tar.gz' | $normal_user tar xz && popd
+  [ "$npkg" = 'mingw-w64-gcc 4.8.1-3' ]pushd .. && curl 'https://dl.dropboxusercontent.com/u/33784287/aur/mingw-w64-gcc-4.8.1-3.src.tar.gz' | $normal_user tar xz && popd
+}
+
+
+after_build() {
+  # becuase of the dependency circle that mingw crt and gcc make mingw-w64 has to be removed with force
+  lyes | pacman -Rscnd mingw-w64
+  [ "$pkg" = 'mingw-w64-qt4-static' ] && lyes | pacman -R mingw-w64-qt4-dummy
+  # unmount compressed directory so they can be deleted
+  if [ ! -z "$compressed_dir" ]; then
+    fusermount -u "$compressed_dir"
+    unset compressed_dir
+  fi
+}
+
+
+modify_depts() {
+  unset temp_depts
+  for dept in "${depts[@]}"; do
+    # there is currenty a problem with the latest stable mingw-w64 crt and headers
+    #[ "$dept" = 'mingw-w64-crt' ] && dept='mingw-w64-crt-svn'
+    #[ "$dept" = 'mingw-w64-headers' ] && dept='mingw-w64-headers-svn'
+
+    # mingw-w64-xmms doesn't exsist
+    #[ "$dept" = 'mingw-w64-xmms' ] && unset dept
+
+    # mingw-w64-crt-secure should be build with mingw-w64-headers-secure
+    #[ "${pkgname}" = 'mingw-w64-crt-secure' ] && [ "$dept" = 'mingw-w64-headers-svn' ] && dept='mingw-w64-headers-secure'
+
+    # qt5 requires a patched gcc to build
+    #[[ "${pkgname}" = 'mingw-w64-qt5-base'* ]] && [ "$dept" = 'mingw-w64-gcc' ] && dept='mingw-w64-gcc-qt5'
+
+    # some packages don't compile with the latest headers.
+    #[ "${pkgname}" = 'mingw-w64-ffmpeg' ] && [ "$dept" = "mingw-w64-crt-svn" ] && dept='mingw-w64-crt-secure mingw-w64-headers-secure'
+    #[ "${pkgname}" = 'mingw-w64-ruby' ] && [ "$dept" = "mingw-w64-crt-svn" ] && dept='mingw-w64-crt-secure mingw-w64-headers-secure'
+    #[ "${pkgname}" = 'mingw-w64-sdl2' ] && [ "$dept" = "mingw-w64-crt-svn" ] && dept='mingw-w64-crt-secure mingw-w64-headers-secure'
+    #[ "${pkgname}" = 'mingw-w64-boost' ] && [ "$dept" = "mingw-w64-crt-svn" ] && dept='mingw-w64-crt-secure mingw-w64-headers-secure'
+    #[ "${pkgname}" = 'mingw-w64-orc' ] && [ "$dept" = "mingw-w64-crt-svn" ] && dept='mingw-w64-crt-secure mingw-w64-headers-secure'
+
     # manual way to install qt4-dummy for now
     if [ "$pkg" = 'mingw-w64-qt4-static' ]; then
-      curl -O https://dl.dropboxusercontent.com/u/33784287/websharing/mingw-w64-qt4-dummy/PKGBUILD
-      makepkg -i --noconfirm --asroot
-      rm -fR pkg src mingw-w64-qt4-dummy-1-1-any.pkg.tar.xz PKGBUILD
+      [ "$dept" = 'mingw-w64-qt4' ] && unset dept
+      if [ "$dept" = 'mingw-w64-qt4-dummy' ]; then
+        pushd $builddir
+        curl -O https://dl.dropboxusercontent.com/u/33784287/websharing/mingw-w64-qt4-dummy/PKGBUILD
+        makepkg -i --noconfirm --asroot
+        rm -fR pkg src mingw-w64-qt4-dummy-1-1-any.pkg.tar.xz PKGBUILD
+        unset dept
+        popd
+      fi
     fi
+
+    temp_depts+=($dept)
+  done
+
+  # some packages have missing dependencies
+  [ "$pkgname" = 'mingw-w64-angleproject' ] && temp_depts+=('mingw-w64-headers' 'mingw-w64-crt')
+  [ "$pkgname" = 'mingw-w64-giflib' ] && temp_depts+=('docbook-xml')
+  [ "$pkgname" = 'mingw-w64-uriparser' ] && temp_depts+=('cmake')
+  #[ "$pkgname" = 'mingw-w64-pthreads' ] && temp_depts+=('mingw-w64-gcc')
+
+  unset depts
+  depts=${temp_depts[@]}
+}
+
+
+modify_ver() {
+  # manual changes to some packages to make them not auto update
+  [ "$pkg" = 'mingw-w64-headers-svn' ] && [ "$nver" = '6298-1' ] && nver='6308-1'
+  [ "$pkg" = 'mingw-w64-crt-svn' ] && [ "$nver" = '6298-1' ] && nver='6308-1'
+  [ "$pkg" = 'mingw-w64-winpthreads-svn' ] && [ "$nver" = '6298-1' ] && nver='6308-1'
+  [ "$pkg" = 'gyp-svn' ] && [ "$nver" = '1719-2' ] && nver='1738-1'
+  [ "$pkg" = 'mingw-w64-gettext' ] && [ "$nver" = '0.18.2.1-1' ] && nver='0.18.3.1-1'
+  [ "$pkg" = 'mingw-w64-glib2' ] && [ "$nver" = '2.37.1-1' ] && nver='2.37.7-1'
+}
+
+
+# compile function
+compile() {
+  for pkg in "${buildlist[@]}"; do
+    $normal_user mkdir -p "$builddir/$pkg"
+    buildlog="$builddir/$pkg/$pkg-build.log"
+    echo "building $pkg" | tee -a $mainlog $buildlog
     # download package
-    $normal_user curl -O https://aur.archlinux.org/packages/${pkg:0:2}/$pkg/$pkg.tar.gz
-    $normal_user tar xzvf $pkg.tar.gz
+    curl https://aur.archlinux.org/packages/${pkg:0:2}/$pkg/$pkg.tar.gz | $normal_user tar xz -C $builddir
     
-    # compress some packages while building to save disk space
-    # This is not really a solution since it causes other strange errors at times
-    # we'll ceck if there is less then 20GB available for now.
-    if [ $(($(stat -f --format="%a*%S" .))) -lt 20000000000 ]; then
-      [[ "$pkg" = 'mingw-w64-qt4'* ]] && fusecompress "$PWD/$pkg" && compress_list+=("$PWD/$pkg")
-    fi
-    
-    pushd $pkg
+    pushd "$builddir/$pkg"
       # install dependencies
       install_deps
-      # fix download paths
-      [ "$pkg" = 'mingw-w64-headers-svn' ] && curl -O 'https://gist.github.com/ant32/6295855/raw/d35692058f8c3941144b01cbf416e5c30c513853/PKGBUILD'
-      #[ "$pkg" = 'mingw-w64-headers-svn' ] && sed -e "s|5882|5904|g" -i PKGBUILD
-      [ "$pkg" = 'mingw-w64-crt-svn' ] && sed -e 's|./ ${_svnmod}|./ ${_svnmod} --revision 5969|g' -i PKGBUILD
-      [ "$pkg" = 'mingw-w64-crt-svn' ] && sed -e 's|mingw-w64.svn.sourceforge.net/svnroot/mingw-w64|svn.code.sf.net/p/mingw-w64/code|g' -i PKGBUILD
-      [ "$pkg" = 'mingw-w64-winpthreads' ] && sed -e 's|mingw-w64.svn.sourceforge.net/svnroot/mingw-w64/experimental|svn.code.sf.net/p/mingw-w64/code/trunk/mingw-w64-libraries|g' -i PKGBUILD
-      [ "$pkg" = 'mingw-w64-winpthreads' ] && sed -e 's|_svnrev=5741|_svnrev=5969|g' -i PKGBUILD
-      # the older gettext does not compile with newer mingw
-      [ "$pkg" = 'mingw-w64-gettext' ] && sed -e "s|0.18.2.1|0.18.3.1|g" -i PKGBUILD
-      [ "$pkg" = 'mingw-w64-gettext' ] && sed -e "s|034c8103b14654ebd300fadac44d6f14|3fc808f7d25487fc72b5759df7419e02|g" -i PKGBUILD
+      before_build
       # compile package
       $normal_user makepkg --noconfirm -L -c
       # since our space is limited we'll remove src and pkg directories
@@ -62,18 +146,19 @@ compile() {
         $normal_user repo-add $test_repository/mingw-w64-testing.db.tar.gz $test_repository/$pkg*.pkg.tar.xz
         lyes | pacman -Scc && pacman -Syy
       else
-        sed -i '$ d' $mainlog $buildlog
+        sed -i '$ d' $mainlog $buildlog  # delete last line and replace with failed
         echo "$pkg failed to build" | tee -a $mainlog $buildlog
       fi
+      # compress and store away log 
+      $normal_user tar -czf "$logdir/`date "+%Y%m%d-%H%M"`-$pkg.log.tar.gz" *.log
     popd
     
+    after_build
     # uninstall no longer needed packages (this has to be done cause later when installing
     # dependencies and there already is a package that provides something it'll sometimes not
     # install the correct packages)
-    # becuase of the dependency circle that mingw crt and gcc make mingw-w64 has to be removed with force
-    lyes | pacman -Rscnd mingw-w64
     lyes | pacman -Rscnd $(pacman -Qtdq)
-    [ "$pkg" = 'mingw-w64-qt4-static' ] && lyes | pacman -R mingw-w64-qt4-dummy
+    rm -fR "$builddir/$pkg"
   done
 }
 
@@ -83,41 +168,23 @@ install_deps() {
   unset depts depends optdepends makedepends
   # source file to get the variables
   source ./PKGBUILD
-  echo "Installing dependencies for ${pkg}" 2>&1 | tee -a "$builddir/$build/$pkg/$pkg-installdeps.log"
+  echo "Installing dependencies for ${pkg}" 2>&1 | tee -a "$builddir/$pkg/$pkg-installdeps.log"
   # loop all dependencies
   for dept in "${depends[@]}" "${optdepends[@]}" "${makedepends[@]}"; do
     # remove description from dependency
     i=`expr index "${dept}" ':' - 1`
     [ "$i" -eq '-1' ] && ndept=$dept || ndept=${dept:0:$i}
-
-    # secure crt should be build with secure headers
-    [ "${pkgname}" = 'mingw-w64-crt-secure' ] && [ "${ndept}" = "mingw-w64-headers" ] && ndept='mingw-w64-headers-secure'
-    [[ "${pkgname}" = 'mingw-w64-qt5-base'* ]] && [ "${ndept}" = 'mingw-w64-crt' ] && ndept='mingw-w64-crt-secure'
-    # there is currenty a problem with the latest stable mingw-w64 crt and headers
-    [ "${ndept}" = 'mingw-w64-crt' ] && ndept='mingw-w64-crt-svn'
-    [ "${ndept}" = 'mingw-w64-headers' ] && ndept='mingw-w64-headers-svn'
-    # qt5 package require a patched gcc to build
-    [[ "${pkgname}" = 'mingw-w64-qt5-base'* ]] && [ "${ndept}" = 'mingw-w64-gcc' ] && ndept='mingw-w64-gcc-qt5'
-    # mingw-w64-xmms and mingw-w64-qt4-dummy don't exsist
-    [ "${ndept}" = 'mingw-w64-xmms' ] && unset ndept
-    [ "${ndept}" = 'mingw-w64-qt4-dummy' ] && unset ndept
-    [ "${pkgname}" = 'mingw-w64-qt4-static' ] && [ "${ndept}" = 'mingw-w64-qt4' ] && unset ndept
-
     # add to new array
     depts+=("${ndept}")
   done
   
-  # some packages have missing dependencies
-  [ "$pkgname" = 'mingw-w64-angleproject' ] && depts+=('mingw-w64-headers-secure' 'mingw-w64-crt-secure')
-  [ "$pkgname" = 'mingw-w64-giflib' ] && depts+=('docbook-xml')
-  [ "$pkgname" = 'mingw-w64-uriparser' ] && depts+=('cmake')
-  [ "$pkgname" = 'mingw-w64-pthreads' ] && depts+=('mingw-w64-gcc')
-  [[ "${pkgname}" = 'mingw-w64-qt5-base'* ]] && depts+=('mingw-w64-headers-secure')
-  [[ "${pkgname}" != 'mingw-w64-qt5-base'* ]] && [[ "${pkgname}" = 'mingw-w64-qt5-'* ]] && depts+=('mingw-w64-crt-svn')
+  modify_depts
   
   # install all needed packages as dependencies for easy removal later
-  pacman --sync --asdeps --needed --noconfirm ${depts[@]} 2>&1 | tee -a "$builddir/$build/$pkg/$pkg-installdeps.log"
+  echo "We will now install - ${depts[@]}"
+  pacman --sync --asdeps --needed --noconfirm ${depts[@]} 2>&1 | tee -a "$builddir/$pkg/$pkg-installdeps.log"
 }
+
 
 create_updatelist() {
   unset updatelist
@@ -130,12 +197,9 @@ create_updatelist() {
     source "$pkgbuildsdir/$pkg"
     [[ "$epoch" ]] && nver="${epoch}:"
     nver="${nver}${pkgver}-${pkgrel}"
-    curver=`pacman -Si $pkg | grep Version | tr -d ' ' | sed -e "s/Version://" | head -n 1`
+    curver=`pacman -Si $pkg 2>/dev/null | grep Version | tr -d ' ' | sed -e "s/Version://" | head -n 1`
 
-    # manual changes to some packages to make them not auto update
-    [ "$pkg" = 'mingw-w64-headers-svn' ] && [ "$nver" = '5792-2' ] && nver='5969-1'
-    [ "$pkg" = 'gyp-svn' ] && [ "$nver" = '1678-1' ] && nver='1707-1'
-    [ "$pkg" = 'mingw-w64-gettext' ] && [ "$nver" = '0.18.2.1-1' ] && nver='0.18.3.1-1'
+    modify_ver
     
     if [ "$curver" != $nver ]; then
       echo "updating $pkg from $curver to $nver" | tee -a $mainlog
@@ -145,14 +209,17 @@ create_updatelist() {
 }
 
 
-create_compilejobs() {
-  # for each outdated package create a compile job
+create_buildlist() {
+  unset buildlist
   for pkg in ${updatelist[@]}; do
-    buildlist=($pkg)
-    # check all packages and add the package to the list tath depends on pkg
+    echo -n "$pkg "
+    buildlist+=($pkg)
+    # check all packages and add the package to the list that depends on pkg
+    # this is not needed if the package does not exsist yet
+    if [[ `pacman -Si $pkg 2>/dev/null` ]]; then
     for dep in ${pkglist[@]}; do
       # if package hasn't been built yet don't add it as a reverse dependency
-      if [[ `pacman -Si $dep` ]]; then
+      if [[ `pacman -Si $dep 2>/dev/null` ]]; then
         unset depends optdepends makedepends
         source "$pkgbuildsdir/$dep"
         for rdep in "${depends[@]}" "${optdepends[@]}" "${makedepends[@]}"; do
@@ -163,25 +230,21 @@ create_compilejobs() {
           if [ "${rdep:0:$i}" = "$pkg" ]; then buildlist+=($dep) ;fi
         done
       fi
-    done
-    build="${pkg}_`date "+%Y%m%d-%H%M"`"
-    buildlog="$builddir/$build/$pkg/$pkg-build.log"
-    $normal_user mkdir -p "$builddir/$build"
-    pushd "$builddir/$build"
-      [ "${#buildlist[@]}" -gt 1 ] && echo "package build job: ${buildlist[@]}" | tee -a $mainlog $buildlog
-      compile "${buildlist[@]}"
-      # create compile log
-      $normal_user tar -czf "$builddir/${build}.log.tar.gz" */*.log
-    popd
-    
-    # unmount compressed directories so they can be deleted
-    for compressed_dir in ${compress_list[@]}; do
-      fusermount -u "$compressed_dir"
-    done
-    unset compress_list
-    
-    $normal_user rm -fR "$builddir/$build"
+    done; fi
   done
+  # loop and remove duplicates (only buld the last time needed)
+  echo -e '\nRemoving duplicates from build list'
+  x=0; buldlength=${#buildlist[@]} 
+  while (( $x < $buldlength )); do
+    testpkg=${buildlist[x]}
+    y=0
+    while (( $y < $x )); do
+      [ "$testpkg" = "${buildlist[y]}" ] && unset buildlist[y]
+      let "y+=1"
+    done
+    let "x+=1"
+  done
+  echo -e "Update will now rebuild the following packages.\n${buildlist[@]}"
 }
 
 
@@ -197,10 +260,14 @@ if [ ! -f "$builddir/update.lock" ]; then
 
   # create package list
   unset pkglist
-  while read pkg; do if [ "${pkg:0:1}" != "#" ]; then pkglist+=($pkg); fi; done < "$builddir/scripts/buildlist.txt"
+  while read pkg; do if [ "${pkg:0:1}" != "#" ]; then pkglist+=($pkg); fi; done < "$scriptdir/buildlist.txt"
 
+  echo "Creating update list ..."
   create_updatelist
-  create_compilejobs
+  echo "Creating build list (This may take a while) ..."
+  create_buildlist
+  echo "We will now start compiling ..."
+  compile
 
   # remove lock
   $normal_user rm -fR $pkgbuildsdir

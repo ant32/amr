@@ -1,15 +1,5 @@
 #!/usr/bin/bash
 
-# CHANGES TO ORIGINAL UPDATE.SH
-# I pulled out all modifications to packages and put them in the beginning. In the future
-# I might put he changes in a seperate file and just source it. I would like to redesign
-# the script so it would create a clean chroot to build each package but that'd require
-# more space on the VM from digitalocean that I have. I also made some changes so packages
-# aren't built multiple times.
-
-# Entry script to use with a cron job to automaticaly compile packages when updated.
-
-
 # update variables
 normal_user='sudo -u amr'
 builddir='/build'
@@ -36,9 +26,9 @@ before_build() {
   # compress some packages while building to save disk space
   # This is not really a solution since it causes other strange errors at times
   # we'll check if there is less then 20GB available for now.
-  if [ $(($(stat -f --format="%a*%S" .))) -lt 20000000000 ]; then
-    [[ "$pkg" = 'mingw-w64-qt4'* ]] && fusecompress "$PWD" && compressed_dir="$PWD"
-  fi
+  #if [ $(($(stat -f --format="%a*%S" .))) -lt 20000000000 ]; then
+  #  [[ "$pkg" = 'mingw-w64-qt4'* ]] && fusecompress "$PWD" && compressed_dir="$PWD"
+  #fi
 
   # the older gettext does not compile with newer mingw
   [ "$npkg" = 'mingw-w64-gettext 0.18.2.1-1' ] && sed -e "s|0.18.2.1|0.18.3.1|g" -i PKGBUILD
@@ -46,7 +36,6 @@ before_build() {
 
   # mingw-w64-glib2 is outdated and the older version no longer builds
   [ "$npkg" = 'mingw-w64-glib2 2.37.1-1' ] && pushd .. && curl 'http://userpage.fu-berlin.de/mokaga/mingw-w64-glib2-2.37.7-1.src.tar.gz' | $normal_user tar xz && popd
-  [ "$npkg" = 'mingw-w64-gcc 4.8.1-3' ] && pushd .. && curl 'https://dl.dropboxusercontent.com/u/33784287/aur/mingw-w64-gcc-4.8.1-3.src.tar.gz' | $normal_user tar xz && popd
 }
 
 
@@ -55,35 +44,18 @@ after_build() {
   lyes | pacman -Rscnd mingw-w64
   [ "$pkg" = 'mingw-w64-qt4-static' ] && lyes | pacman -R mingw-w64-qt4-dummy
   # unmount compressed directory so they can be deleted
-  if [ ! -z "$compressed_dir" ]; then
-    fusermount -u "$compressed_dir"
-    unset compressed_dir
-  fi
+  #if [ ! -z "$compressed_dir" ]; then
+  #  fusermount -u "$compressed_dir"
+  #  unset compressed_dir
+  #fi
 }
 
 
 modify_depts() {
   unset temp_depts
   for dept in "${depts[@]}"; do
-    # there is currenty a problem with the latest stable mingw-w64 crt and headers
-    #[ "$dept" = 'mingw-w64-crt' ] && dept='mingw-w64-crt-svn'
-    #[ "$dept" = 'mingw-w64-headers' ] && dept='mingw-w64-headers-svn'
-
     # mingw-w64-xmms doesn't exsist
     #[ "$dept" = 'mingw-w64-xmms' ] && unset dept
-
-    # mingw-w64-crt-secure should be build with mingw-w64-headers-secure
-    #[ "${pkgname}" = 'mingw-w64-crt-secure' ] && [ "$dept" = 'mingw-w64-headers-svn' ] && dept='mingw-w64-headers-secure'
-
-    # qt5 requires a patched gcc to build
-    #[[ "${pkgname}" = 'mingw-w64-qt5-base'* ]] && [ "$dept" = 'mingw-w64-gcc' ] && dept='mingw-w64-gcc-qt5'
-
-    # some packages don't compile with the latest headers.
-    #[ "${pkgname}" = 'mingw-w64-ffmpeg' ] && [ "$dept" = "mingw-w64-crt-svn" ] && dept='mingw-w64-crt-secure mingw-w64-headers-secure'
-    #[ "${pkgname}" = 'mingw-w64-ruby' ] && [ "$dept" = "mingw-w64-crt-svn" ] && dept='mingw-w64-crt-secure mingw-w64-headers-secure'
-    #[ "${pkgname}" = 'mingw-w64-sdl2' ] && [ "$dept" = "mingw-w64-crt-svn" ] && dept='mingw-w64-crt-secure mingw-w64-headers-secure'
-    #[ "${pkgname}" = 'mingw-w64-boost' ] && [ "$dept" = "mingw-w64-crt-svn" ] && dept='mingw-w64-crt-secure mingw-w64-headers-secure'
-    #[ "${pkgname}" = 'mingw-w64-orc' ] && [ "$dept" = "mingw-w64-crt-svn" ] && dept='mingw-w64-crt-secure mingw-w64-headers-secure'
 
     # manual way to install qt4-dummy for now
     if [ "$pkg" = 'mingw-w64-qt4-static' ]; then
@@ -105,7 +77,7 @@ modify_depts() {
   [ "$pkgname" = 'mingw-w64-angleproject' ] && temp_depts+=('mingw-w64-headers' 'mingw-w64-crt')
   [ "$pkgname" = 'mingw-w64-giflib' ] && temp_depts+=('docbook-xml')
   [ "$pkgname" = 'mingw-w64-uriparser' ] && temp_depts+=('cmake')
-  #[ "$pkgname" = 'mingw-w64-pthreads' ] && temp_depts+=('mingw-w64-gcc')
+  [ "$pkgname" = 'mingw-w64-pthreads' ] && temp_depts+=('mingw-w64-gcc')
 
   unset depts
   depts=${temp_depts[@]}
@@ -114,10 +86,7 @@ modify_depts() {
 
 modify_ver() {
   # manual changes to some packages to make them not auto update
-  [ "$pkg" = 'mingw-w64-headers-svn' ] && [ "$nver" = '6298-1' ] && nver='6308-1'
-  [ "$pkg" = 'mingw-w64-crt-svn' ] && [ "$nver" = '6298-1' ] && nver='6308-1'
-  [ "$pkg" = 'mingw-w64-winpthreads-svn' ] && [ "$nver" = '6298-1' ] && nver='6308-1'
-  [ "$pkg" = 'gyp-svn' ] && [ "$nver" = '1719-2' ] && nver='1738-1'
+  [ "$pkg" = 'gyp-svn' ] && [ "$nver" = '1742-1' ] && nver='1750-1'
   [ "$pkg" = 'mingw-w64-gettext' ] && [ "$nver" = '0.18.2.1-1' ] && nver='0.18.3.1-1'
   [ "$pkg" = 'mingw-w64-glib2' ] && [ "$nver" = '2.37.1-1' ] && nver='2.37.7-1'
 }

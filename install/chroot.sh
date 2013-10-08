@@ -1,7 +1,7 @@
 # creating packages as a user without a home folder does not always work
 useradd -m amr
 
-mkdir -p /scripts
+mkdir -p /scripts /build
 cd /scripts
 
 pushd /build

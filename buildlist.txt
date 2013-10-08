@@ -1,12 +1,12 @@
 mingw-w64-binutils
-#mingw-w64-headers
-mingw-w64-headers-svn
+mingw-w64-headers
+#mingw-w64-headers-svn
 mingw-w64-headers-bootstrap
 mingw-w64-gcc-base
-#mingw-w64-crt
-mingw-w64-crt-svn
-#mingw-w64-winpthreads
-mingw-w64-winpthreads-svn
+mingw-w64-crt
+#mingw-w64-crt-svn
+mingw-w64-winpthreads
+#mingw-w64-winpthreads-svn
 mingw-w64-gcc
 mingw-w64-cmake
 mingw-w64-zlib
@@ -196,6 +196,12 @@ mingw-w64-nlopt
 mingw-w64-libsvm
 binfmt-support
 binfmt-wine
-mingw-w64-testsuite
 mingw-w64-qscintilla
+mingw-w64-qsint
+mingw-w64-libgpg-error
+mingw-w64-libgcrypt
+mingw-x64-libxslt
+mingw-w64-libglade
+mingw-w64-libzip
+mingw-w64-testsuite
 

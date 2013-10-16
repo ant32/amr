@@ -31,11 +31,13 @@ before_build() {
   #fi
 
   # the older gettext does not compile with newer mingw
-  [ "$npkg" = 'mingw-w64-gettext 0.18.2.1-1' ] && sed -e "s|0.18.2.1|0.18.3.1|g" -i PKGBUILD
-  [ "$npkg" = 'mingw-w64-gettext 0.18.2.1-1' ] && sed -e "s|034c8103b14654ebd300fadac44d6f14|3fc808f7d25487fc72b5759df7419e02|g" -i PKGBUILD
+  [ "$npkg" = 'mingw-w64-gettext 0.18.2.1-1' ] && curl -O 'https://raw.github.com/ant32/pkgbuild/master/mingw-w64-gettext/PKGBUILD'
 
   # mingw-w64-glib2 is outdated and the older version no longer builds
-  [ "$npkg" = 'mingw-w64-glib2 2.37.1-1' ] && pushd .. && curl 'http://userpage.fu-berlin.de/mokaga/mingw-w64-glib2-2.37.7-1.src.tar.gz' | $normal_user tar xz && popd
+  [ "$npkg" = 'mingw-w64-glib2 2.37.1-1' ] && pushd .. && curl 'https://dl.dropboxusercontent.com/u/33784287/aur/mingw-w64-glib2-2.38.0-1.src.tar.gz' | $normal_user tar xz && popd
+  
+  # update dbus (plus make it compatible with posix thread mingw)
+  [ "$npkg" = 'mingw-w64-dbus 1.6.12-1' ] && curl -O 'https://raw.github.com/ant32/pkgbuild/master/mingw-w64-dbus/PKGBUILD'
 }
 
 
@@ -52,6 +54,7 @@ after_build() {
 
 
 modify_depts() {
+  npkg="$pkgname $pkgver-$pkgrel"
   unset temp_depts
   for dept in "${depts[@]}"; do
     # mingw-w64-xmms doesn't exsist
@@ -69,6 +72,10 @@ modify_depts() {
         popd
       fi
     fi
+    
+    # update dbus (plus make it compatible with posix thread mingw)
+    # I changed dbus to depend on expat insted of mingw-w64-libxml2
+    [ "$npkg" = 'mingw-w64-dbus 1.6.12-1' ] && [ "$dept" = 'mingw-w64-libxml2' ] && dept='mingw-w64-expat'
 
     temp_depts+=($dept)
   done
@@ -88,7 +95,8 @@ modify_ver() {
   # manual changes to some packages to make them not auto update
   [ "$pkg" = 'gyp-svn' ] && [ "$nver" = '1742-1' ] && nver='1750-1'
   [ "$pkg" = 'mingw-w64-gettext' ] && [ "$nver" = '0.18.2.1-1' ] && nver='0.18.3.1-1'
-  [ "$pkg" = 'mingw-w64-glib2' ] && [ "$nver" = '2.37.1-1' ] && nver='2.37.7-1'
+  [ "$pkg" = 'mingw-w64-glib2' ] && [ "$nver" = '2.37.1-1' ] && nver='2.38.0-1'
+  [ "$pkg" = 'mingw-w64-dbus' ] && [ "$nver" = '1.6.12-1' ] && nver='1.6.16-1'
 }
 
 

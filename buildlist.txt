@@ -26,6 +26,7 @@ mingw-w64-libtiff
 mingw-w64-pcre
 mingw-w64-libxml2
 mingw-w64-glib2
+mingw-w64-expat
 mingw-w64-dbus
 mingw-w64-libmariadbclient
 mingw-w64-postgresql-libs
@@ -54,7 +55,6 @@ mingw-w64-quazip-qt4
 mingw-w64-quazip-qt5
 mingw-w64-atk
 mingw-w64-bzip2
-mingw-w64-expat
 mingw-w64-freetype
 mingw-w64-fontconfig
 mingw-w64-pixman
@@ -169,6 +169,7 @@ mingw-w64-orc
 mingw-w64-rtmpdump
 mingw-w64-schroedinger
 mingw-w64-x264
+mingw-w64-xvidcore
 mingw-w64-ffmpeg
 mingw-w64-dlfcn
 mingw-w64-lapack
@@ -182,7 +183,6 @@ mingw-w64-xalan-c
 mingw-w64-proj
 mingw-w64-uriparser
 #mingw-w64-gdc
-#mingw-w64-bin
 mingw-w64-fftw
 mingw-w64-libsquish
 innoextract
@@ -199,9 +199,19 @@ binfmt-wine
 mingw-w64-qscintilla
 mingw-w64-qsint
 mingw-w64-libgpg-error
-mingw-w64-libgcrypt
-mingw-x64-libxslt
-mingw-w64-libglade
+#mingw-w64-libgcrypt
+#mingw-x64-libxslt
+#mingw-w64-libglade
 mingw-w64-libzip
-mingw-w64-testsuite
+mingw-w64-eigen3
+mingw-w64-gsl
+mingw-w64-libltdl
+mingw-w64-libsodium
+#mingw-w64-muparser
+mingw-w64-mpfr
+mingw-w64-libmpc
+mingw-w64-qrencode
+mingw-w64-taglib
+mingw-w64-zeromq
+#mingw-w64-testsuite
 

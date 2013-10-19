@@ -57,8 +57,6 @@ modify_depts() {
   npkg="$pkgname $pkgver-$pkgrel"
   unset temp_depts
   for dept in "${depts[@]}"; do
-    # mingw-w64-xmms doesn't exsist
-    #[ "$dept" = 'mingw-w64-xmms' ] && unset dept
 
     # manual way to install qt4-dummy for now
     if [ "$pkg" = 'mingw-w64-qt4-static' ]; then
@@ -76,6 +74,9 @@ modify_depts() {
     # update dbus (plus make it compatible with posix thread mingw)
     # I changed dbus to depend on expat insted of mingw-w64-libxml2
     [ "$npkg" = 'mingw-w64-dbus 1.6.12-1' ] && [ "$dept" = 'mingw-w64-libxml2' ] && dept='mingw-w64-expat'
+    
+    # mingw-w64-xmms doesn't exsist
+    [ "$npkg" = 'mingw-w64-flac 1.3.0-1' ] && [ "$dept" = 'mingw-w64-xmms' ] && unset dept
 
     temp_depts+=($dept)
   done

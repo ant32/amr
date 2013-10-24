@@ -196,6 +196,8 @@ mingw-w64-libgcrypt
 mingw-x64-libxslt
 mingw-w64-libglade
 mingw-w64-libzip
+mingw-w64-zziplib
+mingw-w64-xz
 mingw-w64-eigen3
 mingw-w64-gsl
 mingw-w64-libltdl

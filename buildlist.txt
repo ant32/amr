@@ -128,7 +128,6 @@ mingw-w64-sdl2_ttf
 mingw-w64-sparsehash
 mingw-w64-speex
 mingw-w64-stormlib
-mingw-w64-wxmsw2.9
 mingw-w64-xerces-c
 mingw-w64-tools
 mingw-w64-boost
@@ -179,7 +178,6 @@ mingw-w64-uriparser
 mingw-w64-fftw
 mingw-w64-libsquish
 innoextract
-mingw-w64-nvidia-cg-toolkit
 mingw-w64-csfml
 mingw-w64-confuse
 mingw-w64-libusbx
@@ -204,7 +202,6 @@ mingw-w64-libltdl
 mingw-w64-libsodium
 mingw-w64-muparser
 mingw-w64-mpfr
-mingw-w64-libmpc
 mingw-w64-qrencode
 mingw-w64-taglib
 mingw-w64-zeromq

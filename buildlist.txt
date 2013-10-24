@@ -215,5 +215,8 @@ mingw-w64-gdbm
 mingw-w64-icu
 mingw-w64-spheresim-git
 mingw-w64-wxmsw
+mingw-w64-libuecc
+mingw-w64-lua51
+mingw-w64-taglib-static
 mingw-w64-testsuite
 

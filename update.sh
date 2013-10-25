@@ -38,6 +38,18 @@ before_build() {
   
   # update dbus (plus make it compatible with posix thread mingw)
   [ "$npkg" = 'mingw-w64-dbus 1.6.12-1' ] && curl -O 'https://raw.github.com/ant32/pkgbuild/master/mingw-w64-dbus/PKGBUILD'
+  
+  # mingw-w64-pthreads does not replace or provide mingw-w64-winpthreads
+  [ "$npkg" = 'mingw-w64-pthreads 2.9.1-2' ] && 
+    sed -e "s/replaces=('mingw-w64-winpthreads')//" \
+        -e "s/provides=('mingw-w64-headers-bootstrap' 'mingw-w64-winpthreads')/provides=('mingw-w64-headers-bootstrap')/" -i PKGBUILD
+  
+  # mingw-w64-bullet has incorrect revision and checksum
+  #[ "$npkg" = 'mingw-w64-bullet 2.82-2' ] && sed -e 's/r2703/r2704/g' \
+  #  -e "s|md5sums=('b46c8178b2fb55e7a2515ca59fdbab6c')|sha1sums=('a0867257b9b18e9829bbeb4c6c5872a5b29d1d33')|g" -i PKGBUILD
+  [ "$npkg" = 'mingw-w64-bullet 2.82-2' ] && sed -e 's/r2703/rev2613/g' -e 's/2.82/2.81/g' \
+    -e 's|b46c8178b2fb55e7a2515ca59fdbab6c|cec9c9a79c2804dbf6385dd7d061346c|g' -i PKGBUILD
+  
 }
 
 
@@ -76,7 +88,7 @@ modify_depts() {
     [ "$npkg" = 'mingw-w64-dbus 1.6.12-1' ] && [ "$dept" = 'mingw-w64-libxml2' ] && dept='mingw-w64-expat'
     
     # mingw-w64-xmms doesn't exsist
-    [ "$npkg" = 'mingw-w64-flac 1.3.0-1' ] && [ "$dept" = 'mingw-w64-xmms' ] && unset dept
+    [ "$npkg" = 'mingw-w64-flac 1.3.0-2' ] && [ "$dept" = 'mingw-w64-xmms' ] && unset dept
 
     temp_depts+=($dept)
   done
@@ -93,11 +105,16 @@ modify_depts() {
 
 
 modify_ver() {
+  npkg="$pkgname $pkgver-$pkgrel"
   # manual changes to some packages to make them not auto update
-  [ "$pkg" = 'gyp-svn' ] && [ "$nver" = '1742-1' ] && nver='1750-1'
-  [ "$pkg" = 'mingw-w64-gettext' ] && [ "$nver" = '0.18.2.1-1' ] && nver='0.18.3.1-1'
-  [ "$pkg" = 'mingw-w64-glib2' ] && [ "$nver" = '2.37.1-1' ] && nver='2.38.0-1'
-  [ "$pkg" = 'mingw-w64-dbus' ] && [ "$nver" = '1.6.12-1' ] && nver='1.6.16-1'
+  [ "$npkg" = 'gyp-svn 1742-1' ] && nver='1750-1'
+  [ "$npkg" = 'mingw-w64-gettext 0.18.2.1-1' ] && nver='0.18.3.1-1'
+  [ "$npkg" = 'mingw-w64-glib2 2.37.1-1' ] && nver='2.38.0-1'
+  [ "$npkg" = 'mingw-w64-dbus 1.6.12-1' ] && nver='1.6.16-1'
+  
+  # packages not building
+  #[ "$pkgname" = 'mingw-w64-xalan-c' ] && nver='rebuild'
+  #[ "$pkgname" = 'mingw-w64-libftdi1' ] && nver='rebuild'
 }
 
 
@@ -119,9 +136,11 @@ compile() {
       # since our space is limited we'll remove src and pkg directories
       rm -fR src pkg
       # if package was created update temp repository
-      if [ -f $pkg*.pkg.tar.xz ]; then
-        $normal_user cp $pkg*.pkg.tar.xz $test_repository
-        $normal_user repo-add $test_repository/mingw-w64-testing.db.tar.gz $test_repository/$pkg*.pkg.tar.xz
+      if [ -f *.pkg.tar.xz ]; then
+        for pkgtar in *.pkg.tar.xz; do
+          $normal_user mv "$pkgtar" "$test_repository/${pkgtar/:/_}"
+          $normal_user repo-add "$test_repository/mingw-w64-testing.db.tar.gz" "$test_repository/${pkgtar/:/_}"
+        done 
         lyes | pacman -Scc && pacman -Syy
       else
         sed -i '$ d' $mainlog $buildlog  # delete last line and replace with failed

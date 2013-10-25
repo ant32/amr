@@ -1,10 +1,10 @@
 #!/usr/bin/bash
-build_home='/'
+build_home=''
 repo_name='mingw-w64-testing'
 chroot_dir="$build_home/chroot"
-src_dir="$build_home/src"
+src_dir="$build_home/build"
 script_dir="$build_home/scripts"
-log_dir="$build_home/logs"
+log_dir="$build_home/srv/http/logs"
 pkgbuilds_dir="$build_home/pkgbuilds"
 repo_dir="/srv/http/archlinux/mingw-w64-testing/os/x86_64"
 log_file="$log_dir/update.log"

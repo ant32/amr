@@ -23,16 +23,18 @@ before_build() {
   [ "$npkg" = 'mingw-w64-dbus 1.6.12-1' ] && curl -O 'https://raw.github.com/ant32/pkgbuild/master/mingw-w64-dbus/PKGBUILD'
   
   # mingw-w64-pthreads does not replace or provide mingw-w64-winpthreads
-  [ "$npkg" = 'mingw-w64-pthreads 2.9.1-2' ] &&
+  [ "$npkg" = 'mingw-w64-pthreads 2.9.1-2' ] && \
     sed -e "s/replaces=('mingw-w64-winpthreads')//" \
         -e "s/provides=('mingw-w64-headers-bootstrap' 'mingw-w64-winpthreads')/provides=('mingw-w64-headers-bootstrap')/" -i PKGBUILD
   
   # mingw-w64-crt should makedepend on mingw-w64-gcc-base
-  sed -e "s|'mingw-w64-gcc-base' ||" \
-      -e "s|makedepends=()|makedepends=('mingw-w64-gcc-base')|" -i PKGBUILD
+  [ "$pkgname" = 'mingw-w64-crt' ] && \
+    sed -e "s|'mingw-w64-gcc-base' ||" \
+        -e "s|makedepends=()|makedepends=('mingw-w64-gcc-base')|" -i PKGBUILD
   
   # mingw-w64-gcc should makedepend on mingw-w64-gcc-base
-  sed "s|makedepends=(|makedepends=('mingw-w64-gcc-base' |" -i PKGBUILD
+  [ "$pkgname" = 'mingw-w64-gcc' ] && \
+    sed "s|makedepends=(|makedepends=('mingw-w64-gcc-base' |" -i PKGBUILD
 }
 modify_ver() {
   # manual changes to some packages to make them not auto update
@@ -56,7 +58,7 @@ compile() {
       source_package PKGBUILD
       before_build
       # compile package
-      makechrootpkg -c -r "$chroot_dir" -l
+      makechrootpkg -c -r "$chroot_dir" -l mingw
       # if package was created update temp repository
       if [ -f *.pkg.tar.xz ]; then
         for pkgtar in *.pkg.tar.xz; do

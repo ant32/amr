@@ -19,4 +19,3 @@ cp /build/dummy-1-1-any.pkg.tar.xz /scripts
 cp /build/dummy-1-1-any.pkg.tar.xz /srv/http/archlinux/mingw-w64/os/x86_64
 cp /build/dummy-1-1-any.pkg.tar.xz /srv/http/archlinux/mingw-w64-testing/os/x86_64
 ./repo_update.sh
-pacman -Sy

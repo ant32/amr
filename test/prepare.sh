@@ -1,4 +1,4 @@
-pacman -Sy devtools screen
+yes | pacman -Sy devtools screen
 
 mkdir -p /build /scripts
 

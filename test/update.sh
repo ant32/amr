@@ -58,6 +58,7 @@ compile() {
       source_package PKGBUILD
       before_build
       # compile package
+      arch-nspawn "$chroot_dir/root" pacman -Sy
       makechrootpkg -c -r "$chroot_dir" -l mingw
       # if package was created update temp repository
       if [ -f *.pkg.tar.xz ]; then

@@ -168,7 +168,7 @@ Server = http://localhost
 SigLevel = Optional TrustAll
 Server = https://dl.dropboxusercontent.com/u/195642432' >> "$chroot_dir/root/etc/pacman.conf"
 
-  arch-nspawn $CHROOT/root pacman -Syu
+  arch-nspawn "$chroot_dir/root" pacman -Syu
 
   darkhttpd "$repo_dir" &
   http_pid=$!

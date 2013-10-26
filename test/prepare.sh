@@ -1,4 +1,6 @@
-yes | pacman -Sy devtools screen
+# this script it used with digital ocean vm
+
+yes | pacman -Sy devtools screen darkhttpd
 
 mkdir -p /build /scripts
 
@@ -21,3 +23,10 @@ cp /build/dummy-1-1-any.pkg.tar.xz /scripts
 cp /build/dummy-1-1-any.pkg.tar.xz /srv/http/archlinux/mingw-w64/os/x86_64
 cp /build/dummy-1-1-any.pkg.tar.xz /srv/http/archlinux/mingw-w64-testing/os/x86_64
 ./repo_update.sh
+
+# create swap partition
+fallocate -l 512M /swapfile
+chmod 600 /swapfile
+mkswap /swapfile
+swapon /swapfile
+echo '/swapfile none swap defaults 0 0' >> /etc/fstab

@@ -30,3 +30,5 @@ chmod 600 /swapfile
 mkswap /swapfile
 swapon /swapfile
 echo '/swapfile none swap defaults 0 0' >> /etc/fstab
+
+darkhttpd /srv/http &

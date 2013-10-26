@@ -163,7 +163,7 @@ Include = /etc/pacman.d/mirrorlist
 #Server = file:///srv/http/archlinux/$repo/os/$arch
 [mingw-w64-testing]
 SigLevel = Optional TrustAll
-Server = http://localhost
+Server = http://127.0.0.1/
 [ant32]
 SigLevel = Optional TrustAll
 Server = https://dl.dropboxusercontent.com/u/195642432' >> "$chroot_dir/root/etc/pacman.conf"

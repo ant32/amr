@@ -158,20 +158,17 @@ prepare_chroot() {
   echo '
 [multilib]
 Include = /etc/pacman.d/mirrorlist
-#[mingw-w64]
-#SigLevel = Optional TrustAll
-#Server = file:///srv/http/archlinux/$repo/os/$arch
+[mingw-w64]
+SigLevel = Optional TrustAll
+Server = http://127.0.0.1/archlinux/$repo/os/$arch
 [mingw-w64-testing]
 SigLevel = Optional TrustAll
-Server = http://127.0.0.1/
+Server = http://127.0.0.1/archlinux/$repo/os/$arch
 [ant32]
 SigLevel = Optional TrustAll
 Server = https://dl.dropboxusercontent.com/u/195642432' >> "$chroot_dir/root/etc/pacman.conf"
 
   arch-nspawn "$chroot_dir/root" pacman -Syu
-
-  darkhttpd "$repo_dir" &
-  http_pid=$!
 }
 
 
@@ -198,6 +195,5 @@ if [ ! -f "$script_dir/update.lock" ]; then
   # remove lock
   echo "Building packages completed at `date`" | tee -a $log_file
   clean_dirs
-  kill $http_pid
   rm "$script_dir/update.lock"
 fi

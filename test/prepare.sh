@@ -1,3 +1,5 @@
+pacman -Sy devtools screen
+
 mkdir -p /build /scripts
 
 cd /build

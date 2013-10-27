@@ -40,8 +40,9 @@ before_build() {
   [ "$pkgname" = 'mingw-w64-crt' ] && sed "s|('!strip' '!buildflags' '!libtool' '!emptydirs')|('!strip' '!buildflags' '!libtool' '!emptydirs' 'staticlibs')|" -i PKGBUILD
   [ "$pkgname" = 'mingw-w64-winpthreads' ] && sed "s|('!strip' '!buildflags' '!libtool' '!emptydirs')|('!strip' '!buildflags' '!libtool' '!emptydirs' 'staticlibs')|" -i PKGBUILD
   [ "$pkgname" = 'mingw-w64-gcc' ] && sed "s|('!strip' '!libtool' '!emptydirs' '!buildflags')|('!strip' '!libtool' '!emptydirs' '!buildflags' 'staticlibs')|" -i PKGBUILD
-    
-  chmod 644 *; chmod 644 ..
+  
+  # some source tarballs don't have the correct permissions
+  chmod 777 -R .
 }
 modify_ver() {
   # manual changes to some packages to make them not auto update
@@ -189,7 +190,8 @@ if [ ! -f "$script_dir/update.lock" ]; then
   # create lock
   touch "$script_dir/update.lock"
   echo "STARTING UPDATE `date`" | tee -a $log_file
-  
+
+  pacman -Sy
   prepare_chroot
 
   # create package list

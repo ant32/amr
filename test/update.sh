@@ -50,7 +50,6 @@ modify_ver() {
   [ "$npkg" = 'mingw-w64-gettext 0.18.2.1-1' ] && nver='0.18.3.1-1'
   [ "$npkg" = 'mingw-w64-glib2 2.37.1-1' ] && nver='2.38.0-1'
   [ "$npkg" = 'mingw-w64-dbus 1.6.12-1' ] && nver='1.6.16-1'
-  #[ "$pkgname" = 'mingw-w64-gcc' ] && nver='rebuild'
 }
 
 
@@ -68,7 +67,7 @@ compile() {
       before_build
       # compile package
       arch-nspawn "$chroot_dir/root" pacman -Sy
-      makechrootpkg -c -r "$chroot_dir" -l mingw
+      makechrootpkg -c -r "$chroot_dir" -l mingw | tee "$pkg.log"
       # if package was created update temp repository
       if [ -f *.pkg.tar.xz ]; then
         for pkgtar in *.pkg.tar.xz; do
@@ -84,7 +83,7 @@ compile() {
         echo "$pkg failed to build" | tee -a $log_file
       fi
       # compress and store away log
-      tar -czf "$log_dir/`date "+%Y%m%d-%H%M"`-$pkg.log.tar.gz" *.log
+      tar -czf "$log_dir/`date "+%Y%m%d-%H%M"`-$pkg.log.tar.gz" "$pkg.log"
     popd
     # delete the package directory
     rm -fR "$src_dir/$pkg"

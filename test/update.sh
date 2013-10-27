@@ -35,6 +35,13 @@ before_build() {
   # mingw-w64-gcc should makedepend on mingw-w64-gcc-base
   [ "$pkgname" = 'mingw-w64-gcc' ] && \
     sed "s|makedepends=(|makedepends=('mingw-w64-gcc-base' |" -i PKGBUILD
+  
+  # mingw-w64-crt should have staticlibs
+  [ "$pkgname" = 'mingw-w64-crt' ] && sed "s|('!strip' '!buildflags' '!libtool' '!emptydirs')|('!strip' '!buildflags' '!libtool' '!emptydirs' 'staticlibs')|" -i PKGBUILD
+  [ "$pkgname" = 'mingw-w64-winpthreads' ] && sed "s|('!strip' '!buildflags' '!libtool' '!emptydirs')|('!strip' '!buildflags' '!libtool' '!emptydirs' 'staticlibs')|" -i PKGBUILD
+  [ "$pkgname" = 'mingw-w64-gcc' ] && sed "s|('!strip' '!libtool' '!emptydirs' '!buildflags')|('!strip' '!libtool' '!emptydirs' '!buildflags' 'staticlibs')|" -i PKGBUILD
+    
+  chmod 644 *; chmod 644 ..
 }
 modify_ver() {
   # manual changes to some packages to make them not auto update
@@ -42,6 +49,7 @@ modify_ver() {
   [ "$npkg" = 'mingw-w64-gettext 0.18.2.1-1' ] && nver='0.18.3.1-1'
   [ "$npkg" = 'mingw-w64-glib2 2.37.1-1' ] && nver='2.38.0-1'
   [ "$npkg" = 'mingw-w64-dbus 1.6.12-1' ] && nver='1.6.16-1'
+  #[ "$pkgname" = 'mingw-w64-gcc' ] && nver='rebuild'
 }
 
 

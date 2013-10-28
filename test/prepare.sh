@@ -31,4 +31,15 @@ mkswap /swapfile
 swapon /swapfile
 echo '/swapfile none swap defaults 0 0' >> /etc/fstab
 
-darkhttpd /srv/http &
+echo '
+[multilib]
+Include = /etc/pacman.d/mirrorlist
+[mingw-w64]
+SigLevel = Optional TrustAll
+Server = file:///srv/http/archlinux/$repo/os/$arch
+[mingw-w64-testing]
+SigLevel = Optional TrustAll
+Server = file:///srv/http/archlinux/$repo/os/$arch
+[ant32]
+SigLevel = Optional TrustAll
+Server = https://dl.dropboxusercontent.com/u/195642432' >> /etc/pacman.conf

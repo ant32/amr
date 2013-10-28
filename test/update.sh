@@ -31,18 +31,33 @@ before_build() {
         -e "s/provides=('mingw-w64-headers-bootstrap' 'mingw-w64-winpthreads')/provides=('mingw-w64-headers-bootstrap')/" -i PKGBUILD
   
   # mingw-w64-crt should makedepend on mingw-w64-gcc-base
-  [ "$pkgname" = 'mingw-w64-crt' ] && \
+  [ "$npkg" = 'mingw-w64-crt 3.0.0-1' ] && \
     sed -e "s|'mingw-w64-gcc-base' ||" \
         -e "s|makedepends=()|makedepends=('mingw-w64-gcc-base')|" -i PKGBUILD
   
   # mingw-w64-gcc should makedepend on mingw-w64-gcc-base
-  [ "$pkgname" = 'mingw-w64-gcc' ] && \
+  [ "$npkg" = 'mingw-w64-gcc 4.8.2-1' ] && \
     sed "s|makedepends=(|makedepends=('mingw-w64-gcc-base' |" -i PKGBUILD
   
-  # mingw-w64-crt should have staticlibs
-  [ "$pkgname" = 'mingw-w64-crt' ] && sed "s|('!strip' '!buildflags' '!libtool' '!emptydirs')|('!strip' '!buildflags' '!libtool' '!emptydirs' 'staticlibs')|" -i PKGBUILD
-  [ "$pkgname" = 'mingw-w64-winpthreads' ] && sed "s|('!strip' '!buildflags' '!libtool' '!emptydirs')|('!strip' '!buildflags' '!libtool' '!emptydirs' 'staticlibs')|" -i PKGBUILD
-  [ "$pkgname" = 'mingw-w64-gcc' ] && sed "s|('!strip' '!libtool' '!emptydirs' '!buildflags')|('!strip' '!libtool' '!emptydirs' '!buildflags' 'staticlibs')|" -i PKGBUILD
+  # add staticlibs option and remove !libtool
+  #rubenvb
+  [ "$npkg" = 'mingw-w64-crt 3.0.0-1' ] && sed "s|('!strip' '!buildflags' '!libtool' '!emptydirs')|('!strip' '!buildflags' '!emptydirs' 'staticlibs')|" -i PKGBUILD
+  [ "$npkg" = 'mingw-w64-winpthreads 3.0.0-1' ] && sed "s|('!strip' '!buildflags' '!libtool' '!emptydirs')|('!strip' '!buildflags' '!emptydirs' 'staticlibs')|" -i PKGBUILD
+  [ "$npkg" = 'mingw-w64-gcc 4.8.2-1' ] && sed "s|('!strip' '!libtool' '!emptydirs' '!buildflags')|('!strip' '!emptydirs' '!buildflags' 'staticlibs')|" -i PKGBUILD
+  #brcha
+  [ "$npkg" = 'mingw-w64-libiconv 1.14-6' ] && sed "s|(!strip !buildflags !libtool)|(!strip !buildflags staticlibs)|" -i PKGBUILD
+  [ "$npkg" = 'mingw-w64-libffi 3.0.13-2' ] && sed "s|('!libtool' '!buildflags' '!strip')|('staticlibs' '!buildflags' '!strip')|" -i PKGBUILD
+  [ "$npkg" = 'mingw-w64-pdcurses 3.4-2' ] && sed "s|('!libtool' '!buildflags' '!strip')|('staticlibs' '!buildflags' '!strip')|" -i PKGBUILD
+  [ "$npkg" = 'mingw-w64-win-iconv 0.0.6-1' ] && sed "s|(!strip !buildflags !libtool)|(!strip !buildflags staticlibs)|" -i PKGBUILD
+  [ "$npkg" = 'mingw-w64-libjpeg-turbo 1.3.0-1' ] && sed "s|('!libtool' '!strip' '!buildflags')|('staticlibs' '!strip' '!buildflags')|" -i PKGBUILD
+  [ "$npkg" = 'mingw-w64-openssl 1.0.1e-3' ] && sed "s|(!strip !buildflags)|(!strip !buildflags staticlibs)|" -i PKGBUILD
+  [ "$npkg" = 'mingw-w64-readline 6.2.004-2' ] && sed "s|('!libtool' '!buildflags' '!strip')|('staticlibs' '!buildflags' '!strip')|" -i PKGBUILD
+  [ "$npkg" = 'mingw-w64-sqlite3 3.7.17-1' ] && sed "s|(!buildflags !strip !libtool)|(!buildflags !strip staticlibs)|" -i PKGBUILD
+  [ "$npkg" = 'mingw-w64-libtiff 4.0.3-2' ] && sed "s|('!libtool' '!buildflags' '!strip')|('staticlibs' '!buildflags' '!strip')|" -i PKGBUILD
+  [ "$npkg" = 'mingw-w64-libxml2 2.9.1-1' ] && sed "s|('!buildflags' '!strip')|('staticlibs' '!buildflags' '!strip')|" -i PKGBUILD
+  [ "$npkg" = 'mingw-w64-angleproject 1.0.0.r1561-1' ] && sed "s|('!strip' '!buildflags' '!libtool')|('!strip' '!buildflags' 'staticlibs')|" -i PKGBUILD
+  #Schala
+  [ "$npkg" = 'mingw-w64-pcre 8.33-1' ] && sed "s|(!libtool !strip !buildflags)|(staticlibs !strip !buildflags)|" -i PKGBUILD
   
   # some source tarballs don't have the correct permissions
   chmod 777 -R .

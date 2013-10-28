@@ -35,10 +35,13 @@ before_build() {
 
   # mingw-w64-glib2 is outdated and the older version no longer builds
   [ "$npkg" = 'mingw-w64-glib2 2.37.1-1' ] && pushd .. && curl 'https://dl.dropboxusercontent.com/u/33784287/aur/mingw-w64-glib2-2.38.1-1.src.tar.gz' | $normal_user tar xz && popd
-  
+
   # update dbus (plus make it compatible with posix thread mingw)
   [ "$npkg" = 'mingw-w64-dbus 1.6.12-1' ] && curl -O 'https://raw.github.com/ant32/pkgbuild/master/mingw-w64-dbus/PKGBUILD'
-  
+
+  # update termcap (qoating and staticlibs)
+  [ "$npkg" = 'mingw-w64-termcap 1.3.1-3' ] && curl -O 'https://raw.github.com/ant32/pkgbuild/master/mingw-w64-termcap/PKGBUILD'
+
   # mingw-w64-pthreads does not replace or provide mingw-w64-winpthreads
   [ "$npkg" = 'mingw-w64-pthreads 2.9.1-2' ] && 
     sed -e "s/replaces=('mingw-w64-winpthreads')//" \
@@ -111,6 +114,7 @@ modify_ver() {
   [ "$npkg" = 'mingw-w64-gettext 0.18.2.1-1' ] && nver='0.18.3.1-2'
   [ "$npkg" = 'mingw-w64-glib2 2.37.1-1' ] && nver='2.38.1-1'
   [ "$npkg" = 'mingw-w64-dbus 1.6.12-1' ] && nver='1.6.16-2'
+  [ "$npkg" = 'mingw-w64-termcap 1.3.1-3' ] && nver='1.3.1-4'
   
   # packages not building
   #[ "$pkgname" = 'mingw-w64-xalan-c' ] && nver='rebuild'

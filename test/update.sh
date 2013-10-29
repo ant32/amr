@@ -198,6 +198,8 @@ Server = http://127.0.0.1/archlinux/$repo/os/$arch
 SigLevel = Optional TrustAll
 Server = https://dl.dropboxusercontent.com/u/195642432' >> "$chroot_dir/root/etc/pacman.conf"
 
+sed 's|#PACKAGER="John Doe <john@doe.com>"|PACKAGER="ant32 <antreimer@gmail.com>"|' -i "$chroot_dir/root/etc/makepkg.conf"
+
   arch-nspawn "$chroot_dir/root" pacman -Syu
 }
 

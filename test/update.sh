@@ -13,38 +13,32 @@ log_file="$log_dir/update.log"
 ############# MODIFICATIONS TO PACKAGES #############################
 
 before_build() {
+  #rubenvb --------
+  # mingw-w64-crt should makedepend on mingw-w64-gcc-base
+  [ "$npkg" = 'mingw-w64-crt 3.0.0-2' ] && \
+    sed -e "s|'mingw-w64-gcc-base' ||" \
+        -e "s|makedepends=()|makedepends=('mingw-w64-gcc-base')|" -i PKGBUILD
+
+  # mingw-w64-gcc should makedepend on mingw-w64-gcc-base
+  [ "$npkg" = 'mingw-w64-gcc 4.8.2-2' ] && \
+    sed "s|makedepends=(|makedepends=('mingw-w64-gcc-base' |" -i PKGBUILD
+
+  #Schala ---------
+  # add staticlibs option and remove !libtool
+  [ "$npkg" = 'mingw-w64-pcre 8.33-1' ] && sed "s|(!libtool !strip !buildflags)|(staticlibs !strip !buildflags)|" -i PKGBUILD
+
+  #brcha ----------
   # the older gettext does not compile with newer mingw
   [ "$npkg" = 'mingw-w64-gettext 0.18.2.1-1' ] && curl -O 'https://raw.github.com/ant32/pkgbuild/master/mingw-w64-gettext/PKGBUILD'
 
   # mingw-w64-glib2 is outdated and the older version no longer builds
-  [ "$npkg" = 'mingw-w64-glib2 2.37.1-1' ] && pushd .. && curl 'https://dl.dropboxusercontent.com/u/33784287/aur/mingw-w64-glib2-2.38.0-1.src.tar.gz' | tar xz && popd
-  
+  [ "$npkg" = 'mingw-w64-glib2 2.37.1-1' ] && pushd .. && curl 'https://dl.dropboxusercontent.com/u/33784287/aur/mingw-w64-glib2-2.38.1-1.src.tar.gz' | $normal_user tar xz && popd
+
   # update dbus (plus make it compatible with posix thread mingw)
   [ "$npkg" = 'mingw-w64-dbus 1.6.12-1' ] && curl -O 'https://raw.github.com/ant32/pkgbuild/master/mingw-w64-dbus/PKGBUILD'
 
-  # update termcap (qoating and staticlibs)
-  [ "$npkg" = 'mingw-w64-termcap 1.3.1-3' ] && curl -O 'https://raw.github.com/ant32/pkgbuild/master/mingw-w64-termcap/PKGBUILD'
-  
-  # mingw-w64-pthreads does not replace or provide mingw-w64-winpthreads
-  [ "$npkg" = 'mingw-w64-pthreads 2.9.1-2' ] && \
-    sed -e "s/replaces=('mingw-w64-winpthreads')//" \
-        -e "s/provides=('mingw-w64-headers-bootstrap' 'mingw-w64-winpthreads')/provides=('mingw-w64-headers-bootstrap')/" -i PKGBUILD
-  
-  # mingw-w64-crt should makedepend on mingw-w64-gcc-base
-  [ "$npkg" = 'mingw-w64-crt 3.0.0-1' ] && \
-    sed -e "s|'mingw-w64-gcc-base' ||" \
-        -e "s|makedepends=()|makedepends=('mingw-w64-gcc-base')|" -i PKGBUILD
-  
-  # mingw-w64-gcc should makedepend on mingw-w64-gcc-base
-  [ "$npkg" = 'mingw-w64-gcc 4.8.2-1' ] && \
-    sed "s|makedepends=(|makedepends=('mingw-w64-gcc-base' |" -i PKGBUILD
-  
   # add staticlibs option and remove !libtool
-  #rubenvb
-  [ "$npkg" = 'mingw-w64-crt 3.0.0-1' ] && sed "s|('!strip' '!buildflags' '!libtool' '!emptydirs')|('!strip' '!buildflags' '!emptydirs' 'staticlibs')|" -i PKGBUILD
-  [ "$npkg" = 'mingw-w64-winpthreads 3.0.0-1' ] && sed "s|('!strip' '!buildflags' '!libtool' '!emptydirs')|('!strip' '!buildflags' '!emptydirs' 'staticlibs')|" -i PKGBUILD
-  [ "$npkg" = 'mingw-w64-gcc 4.8.2-1' ] && sed "s|('!strip' '!libtool' '!emptydirs' '!buildflags')|('!strip' '!emptydirs' '!buildflags' 'staticlibs')|" -i PKGBUILD
-  #brcha
+  [ "$npkg" = 'mingw-w64-termcap 1.3.1-3' ] && curl -O 'https://raw.github.com/ant32/pkgbuild/master/mingw-w64-termcap/PKGBUILD'
   [ "$npkg" = 'mingw-w64-libiconv 1.14-6' ] && sed "s|(!strip !buildflags !libtool)|(!strip !buildflags staticlibs)|" -i PKGBUILD
   [ "$npkg" = 'mingw-w64-libffi 3.0.13-2' ] && sed "s|('!libtool' '!buildflags' '!strip')|('staticlibs' '!buildflags' '!strip')|" -i PKGBUILD
   [ "$npkg" = 'mingw-w64-pdcurses 3.4-2' ] && sed "s|('!libtool' '!buildflags' '!strip')|('staticlibs' '!buildflags' '!strip')|" -i PKGBUILD
@@ -56,9 +50,21 @@ before_build() {
   [ "$npkg" = 'mingw-w64-libtiff 4.0.3-2' ] && sed "s|('!libtool' '!buildflags' '!strip')|('staticlibs' '!buildflags' '!strip')|" -i PKGBUILD
   [ "$npkg" = 'mingw-w64-libxml2 2.9.1-1' ] && sed "s|('!buildflags' '!strip')|('staticlibs' '!buildflags' '!strip')|" -i PKGBUILD
   [ "$npkg" = 'mingw-w64-angleproject 1.0.0.r1561-1' ] && sed "s|('!strip' '!buildflags' '!libtool')|('!strip' '!buildflags' 'staticlibs')|" -i PKGBUILD
-  #Schala
-  [ "$npkg" = 'mingw-w64-pcre 8.33-1' ] && sed "s|(!libtool !strip !buildflags)|(staticlibs !strip !buildflags)|" -i PKGBUILD
-  
+
+  #skudo ----------
+  # manual way to install qt4-dummy for now
+  #if [ "$pkg" = 'mingw-w64-qt4-static' ]; then
+  #  [ "$dept" = 'mingw-w64-qt4' ] && unset dept
+  #  if [ "$dept" = 'mingw-w64-qt4-dummy' ]; then
+  #    pushd "$src_dir"
+  #    curl -O https://dl.dropboxusercontent.com/u/33784287/websharing/mingw-w64-qt4-dummy/PKGBUILD
+  #    makepkg -i --noconfirm --asroot
+  #    rm -fR pkg src mingw-w64-qt4-dummy-1-1-any.pkg.tar.xz PKGBUILD
+  #    unset dept
+  #    popd
+  #  fi
+  #fi
+
   # some source tarballs don't have the correct permissions
   chmod 777 -R .
 }
@@ -198,7 +204,7 @@ Server = http://127.0.0.1/archlinux/$repo/os/$arch
 SigLevel = Optional TrustAll
 Server = https://dl.dropboxusercontent.com/u/195642432' >> "$chroot_dir/root/etc/pacman.conf"
 
-sed 's|#PACKAGER="John Doe <john@doe.com>"|PACKAGER="ant32 <antreimer@gmail.com>"|' -i "$chroot_dir/root/etc/makepkg.conf"
+  sed 's|#PACKAGER="John Doe <john@doe.com>"|PACKAGER="ant32 <antreimer@gmail.com>"|' -i "$chroot_dir/root/etc/makepkg.conf"
 
   arch-nspawn "$chroot_dir/root" pacman -Syu
 }

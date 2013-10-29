@@ -31,6 +31,7 @@ mkswap /swapfile
 swapon /swapfile
 echo '/swapfile none swap defaults 0 0' >> /etc/fstab
 
+# configure pacman.conf
 echo '
 [multilib]
 Include = /etc/pacman.d/mirrorlist
@@ -43,3 +44,32 @@ Server = file:///srv/http/archlinux/$repo/os/$arch
 [ant32]
 SigLevel = Optional TrustAll
 Server = https://dl.dropboxusercontent.com/u/195642432' >> /etc/pacman.conf
+
+# set up http server
+#service
+echo '[Unit]
+Description=Darkhttpd Webserver
+
+[Service]
+EnvironmentFile=/etc/conf.d/darkhttpd
+ExecStart=/usr/bin/darkhttpd $DARKHTTPD_ROOT --daemon $DARKHTTPD_OPTS
+Type=forking
+
+[Install]
+WantedBy=multi-user.target' > /etc/systemd/system/darkhttpd.service
+#socket
+echo '[Unit]
+Conflicts=darkhttpd.service
+
+[Socket]
+ListenStream=80
+Accept=no
+
+[Install]
+WantedBy=sockets.target' > /etc/systemd/system/darkhttpd.socket
+#conf
+echo 'DARKHTTPD_ROOT="/srv/http"
+DARKHTTPD_OPTS="--uid nobody --gid nobody --chroot"' > /etc/conf.d/darkhttpd
+# enable/start service
+systemctl enable darkhttpd
+systemctl start darkhttpd

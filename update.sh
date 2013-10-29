@@ -10,26 +10,26 @@ test_repository='/srv/http/archlinux/mingw-w64-testing/os/x86_64'
 mainlog="$logdir/update.log"
 
 
-# my yes function that is limited to 10 rounds
-lyes() {
-  i=0
-  while (( i < 10 )); do
-    echo y
-    let "i+=1"
-  done
-}
-
+# modification functions ##########################################################################
 
 before_build() {
   npkg="$pkgname $pkgver-$pkgrel"
 
-  # compress some packages while building to save disk space
-  # This is not really a solution since it causes other strange errors at times
-  # we'll check if there is less then 20GB available for now.
-  #if [ $(($(stat -f --format="%a*%S" .))) -lt 20000000000 ]; then
-  #  [[ "$pkg" = 'mingw-w64-qt4'* ]] && fusecompress "$PWD" && compressed_dir="$PWD"
-  #fi
+  #rubenvb --------
+  # mingw-w64-crt should makedepend on mingw-w64-gcc-base
+  [ "$npkg" = 'mingw-w64-crt 3.0.0-2' ] && \
+    sed -e "s|'mingw-w64-gcc-base' ||" \
+        -e "s|makedepends=()|makedepends=('mingw-w64-gcc-base')|" -i PKGBUILD
 
+  # mingw-w64-gcc should makedepend on mingw-w64-gcc-base
+  [ "$npkg" = 'mingw-w64-gcc 4.8.2-2' ] && \
+    sed "s|makedepends=(|makedepends=('mingw-w64-gcc-base' |" -i PKGBUILD
+
+  #Schala ---------
+  # add staticlibs option and remove !libtool
+  [ "$npkg" = 'mingw-w64-pcre 8.33-1' ] && sed "s|(!libtool !strip !buildflags)|(staticlibs !strip !buildflags)|" -i PKGBUILD
+
+  #brcha ----------
   # the older gettext does not compile with newer mingw
   [ "$npkg" = 'mingw-w64-gettext 0.18.2.1-1' ] && curl -O 'https://raw.github.com/ant32/pkgbuild/master/mingw-w64-gettext/PKGBUILD'
 
@@ -39,20 +39,19 @@ before_build() {
   # update dbus (plus make it compatible with posix thread mingw)
   [ "$npkg" = 'mingw-w64-dbus 1.6.12-1' ] && curl -O 'https://raw.github.com/ant32/pkgbuild/master/mingw-w64-dbus/PKGBUILD'
 
-  # update termcap (qoating and staticlibs)
+  # add staticlibs option and remove !libtool
   [ "$npkg" = 'mingw-w64-termcap 1.3.1-3' ] && curl -O 'https://raw.github.com/ant32/pkgbuild/master/mingw-w64-termcap/PKGBUILD'
-
-  # mingw-w64-pthreads does not replace or provide mingw-w64-winpthreads
-  [ "$npkg" = 'mingw-w64-pthreads 2.9.1-2' ] && 
-    sed -e "s/replaces=('mingw-w64-winpthreads')//" \
-        -e "s/provides=('mingw-w64-headers-bootstrap' 'mingw-w64-winpthreads')/provides=('mingw-w64-headers-bootstrap')/" -i PKGBUILD
-  
-  # mingw-w64-bullet has incorrect revision and checksum
-  #[ "$npkg" = 'mingw-w64-bullet 2.82-2' ] && sed -e 's/r2703/r2704/g' \
-  #  -e "s|md5sums=('b46c8178b2fb55e7a2515ca59fdbab6c')|sha1sums=('a0867257b9b18e9829bbeb4c6c5872a5b29d1d33')|g" -i PKGBUILD
-  [ "$npkg" = 'mingw-w64-bullet 2.82-2' ] && sed -e 's/r2703/rev2613/g' -e 's/2.82/2.81/g' \
-    -e 's|b46c8178b2fb55e7a2515ca59fdbab6c|cec9c9a79c2804dbf6385dd7d061346c|g' -i PKGBUILD
-  
+  [ "$npkg" = 'mingw-w64-libiconv 1.14-6' ] && sed "s|(!strip !buildflags !libtool)|(!strip !buildflags staticlibs)|" -i PKGBUILD
+  [ "$npkg" = 'mingw-w64-libffi 3.0.13-2' ] && sed "s|('!libtool' '!buildflags' '!strip')|('staticlibs' '!buildflags' '!strip')|" -i PKGBUILD
+  [ "$npkg" = 'mingw-w64-pdcurses 3.4-2' ] && sed "s|('!libtool' '!buildflags' '!strip')|('staticlibs' '!buildflags' '!strip')|" -i PKGBUILD
+  [ "$npkg" = 'mingw-w64-win-iconv 0.0.6-1' ] && sed "s|(!strip !buildflags !libtool)|(!strip !buildflags staticlibs)|" -i PKGBUILD
+  [ "$npkg" = 'mingw-w64-libjpeg-turbo 1.3.0-1' ] && sed "s|('!libtool' '!strip' '!buildflags')|('staticlibs' '!strip' '!buildflags')|" -i PKGBUILD
+  [ "$npkg" = 'mingw-w64-openssl 1.0.1e-3' ] && sed "s|(!strip !buildflags)|(!strip !buildflags staticlibs)|" -i PKGBUILD
+  [ "$npkg" = 'mingw-w64-readline 6.2.004-2' ] && sed "s|('!libtool' '!buildflags' '!strip')|('staticlibs' '!buildflags' '!strip')|" -i PKGBUILD
+  [ "$npkg" = 'mingw-w64-sqlite3 3.7.17-1' ] && sed "s|(!buildflags !strip !libtool)|(!buildflags !strip staticlibs)|" -i PKGBUILD
+  [ "$npkg" = 'mingw-w64-libtiff 4.0.3-2' ] && sed "s|('!libtool' '!buildflags' '!strip')|('staticlibs' '!buildflags' '!strip')|" -i PKGBUILD
+  [ "$npkg" = 'mingw-w64-libxml2 2.9.1-1' ] && sed "s|('!buildflags' '!strip')|('staticlibs' '!buildflags' '!strip')|" -i PKGBUILD
+  [ "$npkg" = 'mingw-w64-angleproject 1.0.0.r1561-1' ] && sed "s|('!strip' '!buildflags' '!libtool')|('!strip' '!buildflags' 'staticlibs')|" -i PKGBUILD
 }
 
 
@@ -60,11 +59,6 @@ after_build() {
   # becuase of the dependency circle that mingw crt and gcc make mingw-w64 has to be removed with force
   lyes | pacman -Rscnd mingw-w64
   [ "$pkg" = 'mingw-w64-qt4-static' ] && lyes | pacman -R mingw-w64-qt4-dummy
-  # unmount compressed directory so they can be deleted
-  #if [ ! -z "$compressed_dir" ]; then
-  #  fusermount -u "$compressed_dir"
-  #  unset compressed_dir
-  #fi
 }
 
 
@@ -115,10 +109,17 @@ modify_ver() {
   [ "$npkg" = 'mingw-w64-glib2 2.37.1-1' ] && nver='2.38.1-1'
   [ "$npkg" = 'mingw-w64-dbus 1.6.12-1' ] && nver='1.6.16-2'
   [ "$npkg" = 'mingw-w64-termcap 1.3.1-3' ] && nver='1.3.1-4'
-  
-  # packages not building
-  #[ "$pkgname" = 'mingw-w64-xalan-c' ] && nver='rebuild'
-  #[ "$pkgname" = 'mingw-w64-libftdi1' ] && nver='rebuild'
+}
+
+# compile functions ###############################################################################
+
+# my yes function that is limited to 10 rounds
+lyes() {
+  i=0
+  while (( i < 10 )); do
+    echo y
+    let "i+=1"
+  done
 }
 
 

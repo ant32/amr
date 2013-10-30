@@ -1,11 +1,11 @@
 #!/usr/bin/bash
 build_home=''
 repo_name='mingw-w64-testing'
-chroot_dir="$build_home/chroot"
+chroot_dir="$build_home/build/chroot"
 src_dir="$build_home/build"
 script_dir="$build_home/scripts"
 log_dir="$build_home/srv/http/logs"
-pkgbuilds_dir="$build_home/pkgbuilds"
+pkgbuilds_dir="$build_home/build/pkgbuilds"
 repo_dir="/srv/http/archlinux/mingw-w64-testing/os/x86_64"
 log_file="$log_dir/update.log"
 
@@ -26,6 +26,8 @@ before_build() {
   #Schala ---------
   # add staticlibs option and remove !libtool
   [ "$npkg" = 'mingw-w64-pcre 8.33-1' ] && sed "s|(!libtool !strip !buildflags)|(staticlibs !strip !buildflags)|" -i PKGBUILD
+  [ "$npkg" = 'mingw-w64-pixman 0.30.2-1' ] && sed "s|(!libtool !strip !buildflags)|(staticlibs !strip !buildflags)|" -i PKGBUILD
+  [ "$npkg" = 'mingw-w64-fontconfig 2.10.95-1' ] && sed "s|(!libtool !strip !buildflags)|(staticlibs !strip !buildflags)|" -i PKGBUILD
 
   #brcha ----------
   # the older gettext does not compile with newer mingw

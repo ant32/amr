@@ -28,6 +28,7 @@ before_build() {
   [ "$npkg" = 'mingw-w64-pcre 8.33-1' ] && sed "s|(!libtool !strip !buildflags)|(staticlibs !strip !buildflags)|" -i PKGBUILD
   [ "$npkg" = 'mingw-w64-pixman 0.30.2-1' ] && sed "s|(!libtool !strip !buildflags)|(staticlibs !strip !buildflags)|" -i PKGBUILD
   [ "$npkg" = 'mingw-w64-fontconfig 2.10.95-1' ] && sed "s|(!libtool !strip !buildflags)|(staticlibs !strip !buildflags)|" -i PKGBUILD
+  [ "$npkg" = 'mingw-w64-pango 1.34.1-2' ] && sed "s|(!libtool !strip !buildflags)|(staticlibs !strip !buildflags)|" -i PKGBUILD
 
   #brcha ----------
   # the older gettext does not compile with newer mingw

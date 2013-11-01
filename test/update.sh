@@ -25,32 +25,17 @@ before_build() {
 
   #Schala ---------
   # add staticlibs option and remove !libtool
-  [ "$npkg" = 'mingw-w64-pcre 8.33-1' ] && sed "s|(!libtool !strip !buildflags)|(staticlibs !strip !buildflags)|" -i PKGBUILD
-  [ "$npkg" = 'mingw-w64-pixman 0.30.2-1' ] && sed "s|(!libtool !strip !buildflags)|(staticlibs !strip !buildflags)|" -i PKGBUILD
-  [ "$npkg" = 'mingw-w64-fontconfig 2.10.95-1' ] && sed "s|(!libtool !strip !buildflags)|(staticlibs !strip !buildflags)|" -i PKGBUILD
-  [ "$npkg" = 'mingw-w64-pango 1.34.1-2' ] && sed "s|(!libtool !strip !buildflags)|(staticlibs !strip !buildflags)|" -i PKGBUILD
+  [ "$npkg" = '' ] && sed "s|||" -i PKGBUILD
 
   #brcha ----------
-  # the older gettext does not compile with newer mingw
-  [ "$npkg" = 'mingw-w64-gettext 0.18.2.1-1' ] && curl -O 'https://raw.github.com/ant32/pkgbuild/master/mingw-w64-gettext/PKGBUILD'
-
-  # mingw-w64-glib2 is outdated and the older version no longer builds
-  [ "$npkg" = 'mingw-w64-glib2 2.37.1-1' ] && pushd .. && curl 'https://dl.dropboxusercontent.com/u/33784287/aur/mingw-w64-glib2-2.38.1-1.src.tar.gz' | $normal_user tar xz && popd
-
-  # update dbus (plus make it compatible with posix thread mingw)
-  [ "$npkg" = 'mingw-w64-dbus 1.6.12-1' ] && curl -O 'https://raw.github.com/ant32/pkgbuild/master/mingw-w64-dbus/PKGBUILD'
-
   # add staticlibs option and remove !libtool
   [ "$npkg" = 'mingw-w64-termcap 1.3.1-3' ] && curl -O 'https://raw.github.com/ant32/pkgbuild/master/mingw-w64-termcap/PKGBUILD'
   [ "$npkg" = 'mingw-w64-libiconv 1.14-6' ] && sed "s|(!strip !buildflags !libtool)|(!strip !buildflags staticlibs)|" -i PKGBUILD
   [ "$npkg" = 'mingw-w64-libffi 3.0.13-2' ] && sed "s|('!libtool' '!buildflags' '!strip')|('staticlibs' '!buildflags' '!strip')|" -i PKGBUILD
   [ "$npkg" = 'mingw-w64-pdcurses 3.4-2' ] && sed "s|('!libtool' '!buildflags' '!strip')|('staticlibs' '!buildflags' '!strip')|" -i PKGBUILD
   [ "$npkg" = 'mingw-w64-win-iconv 0.0.6-1' ] && sed "s|(!strip !buildflags !libtool)|(!strip !buildflags staticlibs)|" -i PKGBUILD
-  [ "$npkg" = 'mingw-w64-libjpeg-turbo 1.3.0-1' ] && sed "s|('!libtool' '!strip' '!buildflags')|('staticlibs' '!strip' '!buildflags')|" -i PKGBUILD
   [ "$npkg" = 'mingw-w64-openssl 1.0.1e-3' ] && sed "s|(!strip !buildflags)|(!strip !buildflags staticlibs)|" -i PKGBUILD
   [ "$npkg" = 'mingw-w64-readline 6.2.004-2' ] && sed "s|('!libtool' '!buildflags' '!strip')|('staticlibs' '!buildflags' '!strip')|" -i PKGBUILD
-  [ "$npkg" = 'mingw-w64-sqlite3 3.7.17-1' ] && sed "s|(!buildflags !strip !libtool)|(!buildflags !strip staticlibs)|" -i PKGBUILD
-  [ "$npkg" = 'mingw-w64-libtiff 4.0.3-2' ] && sed "s|('!libtool' '!buildflags' '!strip')|('staticlibs' '!buildflags' '!strip')|" -i PKGBUILD
   [ "$npkg" = 'mingw-w64-libxml2 2.9.1-1' ] && sed "s|('!buildflags' '!strip')|('staticlibs' '!buildflags' '!strip')|" -i PKGBUILD
   [ "$npkg" = 'mingw-w64-angleproject 1.0.0.r1561-1' ] && sed "s|('!strip' '!buildflags' '!libtool')|('!strip' '!buildflags' 'staticlibs')|" -i PKGBUILD
 

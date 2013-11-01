@@ -1,5 +1,10 @@
 # this script it used with digital ocean vm
 
+# update
+pacman -Syu --ignore filesystem,bash --noconfirm
+pacman -S bash --noconfirm
+pacman -Su --noconfirm
+# install needed packages
 yes | pacman -Sy devtools screen darkhttpd
 
 mkdir -p /build /scripts

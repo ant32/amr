@@ -29,15 +29,13 @@ before_build() {
 
   #brcha ----------
   # add staticlibs option and remove !libtool
-  [ "$npkg" = 'mingw-w64-termcap 1.3.1-3' ] && curl -O 'https://raw.github.com/ant32/pkgbuild/master/mingw-w64-termcap/PKGBUILD'
-  [ "$npkg" = 'mingw-w64-libiconv 1.14-6' ] && sed "s|(!strip !buildflags !libtool)|(!strip !buildflags staticlibs)|" -i PKGBUILD
-  [ "$npkg" = 'mingw-w64-libffi 3.0.13-2' ] && sed "s|('!libtool' '!buildflags' '!strip')|('staticlibs' '!buildflags' '!strip')|" -i PKGBUILD
   [ "$npkg" = 'mingw-w64-pdcurses 3.4-2' ] && sed "s|('!libtool' '!buildflags' '!strip')|('staticlibs' '!buildflags' '!strip')|" -i PKGBUILD
   [ "$npkg" = 'mingw-w64-win-iconv 0.0.6-1' ] && sed "s|(!strip !buildflags !libtool)|(!strip !buildflags staticlibs)|" -i PKGBUILD
-  [ "$npkg" = 'mingw-w64-openssl 1.0.1e-3' ] && sed "s|(!strip !buildflags)|(!strip !buildflags staticlibs)|" -i PKGBUILD
-  [ "$npkg" = 'mingw-w64-readline 6.2.004-2' ] && sed "s|('!libtool' '!buildflags' '!strip')|('staticlibs' '!buildflags' '!strip')|" -i PKGBUILD
-  [ "$npkg" = 'mingw-w64-libxml2 2.9.1-1' ] && sed "s|('!buildflags' '!strip')|('staticlibs' '!buildflags' '!strip')|" -i PKGBUILD
   [ "$npkg" = 'mingw-w64-angleproject 1.0.0.r1561-1' ] && sed "s|('!strip' '!buildflags' '!libtool')|('!strip' '!buildflags' 'staticlibs')|" -i PKGBUILD
+
+  #xantares -------
+  [ "$npkg" = 'mingw-w64-libiconv 1.14-6' ] && sed "s|(!strip !buildflags !libtool)|(!strip !buildflags staticlibs)|" -i PKGBUILD
+  [ "$npkg" = 'mingw-w64-openssl 1.0.1e-3' ] && sed "s|(!strip !buildflags)|(!strip !buildflags staticlibs)|" -i PKGBUILD
 
   #skudo ----------
   # manual way to install qt4-dummy for now

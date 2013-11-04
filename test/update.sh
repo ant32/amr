@@ -193,7 +193,7 @@ Server = https://dl.dropboxusercontent.com/u/195642432' >> "$chroot_dir/root/etc
 
 
 # check for lock file and create one if it does not exsist
-if [ ! -f "$script_dir/update.lock" ]; then
+if [ ! -f "$script_dir/lock" ]; then
 
   # create lock
   touch "$script_dir/update.lock"
@@ -206,10 +206,15 @@ if [ ! -f "$script_dir/update.lock" ]; then
   unset pkglist
   while read pkg; do if [ "${pkg:0:1}" != "#" ]; then pkglist+=($pkg); fi; done < "$script_dir/buildlist.txt"
 
-  echo "Creating update list ..."
-  create_updatelist
-  echo "Creating build list (This may take a while) ..."
-  create_buildlist
+  if [ "$1" = 'rebuild' ]; then
+    buildlist=( "${pkglist[@]}" )
+  else 
+    echo "Creating update list ..."
+    create_updatelist
+    echo "Creating build list (This may take a while) ..."
+    create_buildlist
+  fi
+
   echo "We will now start compiling ..."
   compile
 

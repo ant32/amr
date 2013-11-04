@@ -49,7 +49,6 @@ mingw-w64-quazip-qt4
 mingw-w64-quazip-qt5
 mingw-w64-qcustomplot-qt5
 ppcross386
-ppcrossx64
 fpc-i386-win32-rtl
 fpc-x86_64-win64-rtl
 mingw-w64-qt4pas
@@ -223,5 +222,4 @@ mingw-w64-lua51
 mingw-w64-taglib-static
 mingw-w64-kissfft
 mingw-w64-testsuite
-
 

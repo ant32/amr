@@ -29,6 +29,7 @@ mingw-w64-libmariadbclient
 mingw-w64-postgresql-libs
 gyp-svn
 mingw-w64-angleproject
+mingw-w64-angleproject-svn
 mingw-w64-qt4
 mingw-w64-qt4-static
 mingw-w64-qt4-debug
@@ -81,7 +82,6 @@ mingw-w64-gtkmm3
 mingw-w64-gtksourceview2
 mingw-w64-pthreads
 mingw-w64-tcl
-mingw-w64-c-ares
 mingw-w64-gmp
 mingw-w64-nettle
 mingw-w64-libtasn1
@@ -92,17 +92,13 @@ mingw-w64-curl
 mingw-w64-db
 mingw-w64-dumb
 mingw-w64-gc
-mingw-w64-giflib
 mingw-w64-physfs
 mingw-w64-allegro
 mingw-w64-irrlicht
-mingw-w64-json-c
 mingw-w64-json-glib
 mingw-w64-lcms
 mingw-w64-lcms2
-mingw-w64-libconfig
 mingw-w64-libcroco
-mingw-w64-libevent
 mingw-w64-libmikmod
 mingw-w64-librsvg
 mingw-w64-libtheora
@@ -114,10 +110,8 @@ mingw-w64-ruby
 mingw-w64-llvm-libs
 mingw-w64-ode
 mingw-w64-openjpeg
-mingw-w64-portaudio
 mingw-w64-protobuf
 mingw-w64-sdl
-mingw-w64-sdl_gfx
 mingw-w64-sdl_image
 mingw-w64-sdl2
 mingw-w64-sdl2_image
@@ -180,7 +174,6 @@ mingw-w64-proj
 mingw-w64-uriparser
 mingw-w64-gdc
 mingw-w64-fftw
-mingw-w64-libsquish
 innoextract
 mingw-w64-csfml
 mingw-w64-confuse
@@ -213,7 +206,6 @@ mingw-w64-freealut
 mingw-w64-python2
 mingw-w64-python
 mingw-w64-gdbm
-mingw-w64-icu
 mingw-w64-spheresim-git
 mingw-w64-wxmsw
 mingw-w64-wxmsw-static
@@ -221,5 +213,17 @@ mingw-w64-libuecc
 mingw-w64-lua51
 mingw-w64-taglib-static
 mingw-w64-kissfft
+mingw-w64-box2d
+mingw-w64-chipmunk
+mingw-w64-libpng-static
+mingw-w64-libxdiff
+mingw-w64-mixmod
+mingw-w64-nvidia-cg-toolkit
+mingw-w64-tox-git
+mingw-w64-venom-git
+mingw-w64-winpthreads-static
+mingw-w64-wxmsw2.9-static
+mingw-w64-wxmsw2.9-static-with-debug
+mingw-w64-zlib-static
 mingw-w64-testsuite
 

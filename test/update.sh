@@ -176,10 +176,10 @@ prepare_chroot() {
   echo '
 [multilib]
 Include = /etc/pacman.d/mirrorlist
-[mingw-w64]
+[mingw-w64-testing]
 SigLevel = Optional TrustAll
 Server = http://127.0.0.1/archlinux/$repo/os/$arch
-[mingw-w64-testing]
+[mingw-w64]
 SigLevel = Optional TrustAll
 Server = http://127.0.0.1/archlinux/$repo/os/$arch
 [ant32]
@@ -196,7 +196,7 @@ Server = https://dl.dropboxusercontent.com/u/195642432' >> "$chroot_dir/root/etc
 if [ ! -f "$script_dir/lock" ]; then
 
   # create lock
-  touch "$script_dir/update.lock"
+  touch "$script_dir/lock"
   echo "STARTING UPDATE `date`" | tee -a $log_file
 
   pacman -Sy
@@ -221,5 +221,5 @@ if [ ! -f "$script_dir/lock" ]; then
   # remove lock
   echo "Building packages completed at `date`" | tee -a $log_file
   clean_dirs
-  rm "$script_dir/update.lock"
+  rm "$script_dir/lock"
 fi

@@ -23,14 +23,22 @@ before_build() {
   [ "$npkg" = 'mingw-w64-gcc 4.8.2-2' ] && \
     sed "s|makedepends=(|makedepends=('mingw-w64-gcc-base' |" -i PKGBUILD
 
-  #Schala ---------
+  #naelstrof ------
   # add staticlibs option and remove !libtool
-  [ "$npkg" = '' ] && sed "s|||" -i PKGBUILD
+  [ "$npkg" = 'mingw-w64-alure 1.2-2' ] && sed "s|(!strip !buildflags)|(staticlibs !strip !buildflags)|" -i PKGBUILD
+  [ "$npkg" = 'mingw-w64-enet 1.3.9-2' ] && sed "s|('!strip' '!buildflags' '!libtool')|('staticlibs' '!strip' '!buildflags')|" -i PKGBUILD
+  [ "$npkg" = 'mingw-w64-flac 1:1.3.0-2' ] && sed "s|(!libtool !strip !buildflags)|(!staticlibs !strip !buildflags)|" -i PKGBUILD
+  [ "$npkg" = 'mingw-w64-glew 1.10.0-2' ] && sed "s|(!strip !buildflags)|(staticlibs !strip !buildflags)|" -i PKGBUILD
+  [ "$npkg" = 'mingw-w64-libogg' ] && sed "s|('!libtool' '!strip' '!buildflags')|('staticlibs' '!strip' '!buildflags')|" -i PKGBUILD
+  [ "$npkg" = 'mingw-w64-libsndfile 1.0.25-2' ] && sed "s|('!libtool' '!strip')|('staticlibs' '!strip')|" -i PKGBUILD
+  [ "$npkg" = 'mingw-w64-libvorbis' ] && sed "s|(!libtool !strip !buildflags)|(staticlibs !strip !buildflags)|" -i PKGBUILD
+  [ "$npkg" = 'mingw-w64-lua 5.2.2-1' ] && sed "s|(!strip !buildflags)|(staticlibs !strip !buildflags)|" -i PKGBUILD
+  [ "$npkg" = 'mingw-w64-openal 1.15.1-4' ] && sed "s|(!strip !buildflags)|(staticlibs !strip !buildflags)|" -i PKGBUILD
+  [ "$npkg" = 'mingw-w64-physfs 2.0.3-2' ] && sed "s|('!strip' '!buildflags')|('staticlibs' '!strip' '!buildflags')|" -i PKGBUILD
+  [ "$npkg" = 'mingw-w64-soil 0708-1' ] && sed "s|('!strip' '!buildflags')|('staticlibs' '!strip' '!buildflags')|" -i PKGBUILD
 
-  #brcha ----------
+  #xantares -------
   # add staticlibs option and remove !libtool
-  [ "$npkg" = 'mingw-w64-pdcurses 3.4-2' ] && sed "s|('!libtool' '!buildflags' '!strip')|('staticlibs' '!buildflags' '!strip')|" -i PKGBUILD
-  [ "$npkg" = 'mingw-w64-win-iconv 0.0.6-1' ] && sed "s|(!strip !buildflags !libtool)|(!strip !buildflags staticlibs)|" -i PKGBUILD
   [ "$npkg" = 'mingw-w64-angleproject 1.0.0.r1561-1' ] && sed "s|('!strip' '!buildflags' '!libtool')|('!strip' '!buildflags' 'staticlibs')|" -i PKGBUILD
 
   #skudo ----------
@@ -52,7 +60,7 @@ before_build() {
 }
 modify_ver() {
   # manual changes to some packages to make them not auto update
-  [ "$npkg" = 'gyp-svn 1742-1' ] && nver='1773-1'
+  [ "$npkg" = 'gyp-svn 1775-1' ] && nver='1779-1'
   [ "$npkg" = 'mingw-w64-gettext 0.18.2.1-1' ] && nver='0.18.3.1-2'
   [ "$npkg" = 'mingw-w64-glib2 2.37.1-1' ] && nver='2.38.1-1'
   [ "$npkg" = 'mingw-w64-dbus 1.6.12-1' ] && nver='1.6.16-2'

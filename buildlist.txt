@@ -80,7 +80,6 @@ mingw-w64-pangomm
 mingw-w64-gtkmm
 mingw-w64-gtkmm3
 mingw-w64-gtksourceview2
-mingw-w64-pthreads
 mingw-w64-tcl
 mingw-w64-gmp
 mingw-w64-nettle
@@ -172,7 +171,6 @@ mingw-w64-microhttpd
 mingw-w64-xalan-c
 mingw-w64-proj
 mingw-w64-uriparser
-mingw-w64-gdc
 mingw-w64-fftw
 innoextract
 mingw-w64-csfml
@@ -225,5 +223,6 @@ mingw-w64-winpthreads-static
 mingw-w64-wxmsw2.9-static
 mingw-w64-wxmsw2.9-static-with-debug
 mingw-w64-zlib-static
+mingw-w64-glib-networking
 mingw-w64-testsuite
 

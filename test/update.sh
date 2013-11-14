@@ -37,9 +37,7 @@ before_build() {
   [ "$npkg" = 'mingw-w64-physfs 2.0.3-2' ] && sed "s|('!strip' '!buildflags')|('staticlibs' '!strip' '!buildflags')|" -i PKGBUILD
   [ "$npkg" = 'mingw-w64-soil 0708-1' ] && sed "s|('!strip' '!buildflags')|('staticlibs' '!strip' '!buildflags')|" -i PKGBUILD
 
-  #xantares -------
-  # add staticlibs option and remove !libtool
-  [ "$npkg" = 'mingw-w64-angleproject 1.0.0.r1561-1' ] && sed "s|('!strip' '!buildflags' '!libtool')|('!strip' '!buildflags' 'staticlibs')|" -i PKGBUILD
+  [ "$npkg" = 'c' ] && sed "s|('mingw-w64-gcc' 'mingw-w64-binutils')|('mingw-w64-gcc' 'mingw-w64-binutils' 'mingw-w64-pkg-config')|" -i PKGBUILD
 
   #skudo ----------
   # manual way to install qt4-dummy for now
@@ -61,10 +59,7 @@ before_build() {
 modify_ver() {
   # manual changes to some packages to make them not auto update
   [ "$npkg" = 'gyp-svn 1775-1' ] && nver='1779-1'
-  [ "$npkg" = 'mingw-w64-gettext 0.18.2.1-1' ] && nver='0.18.3.1-2'
-  [ "$npkg" = 'mingw-w64-glib2 2.37.1-1' ] && nver='2.38.1-1'
-  [ "$npkg" = 'mingw-w64-dbus 1.6.12-1' ] && nver='1.6.16-2'
-  [ "$npkg" = 'mingw-w64-termcap 1.3.1-3' ] && nver='1.3.1-4'
+  [ "$npkg" = 'mingw-w64-libiconv 1.14-7' ] && nver='rebuild'
 }
 
 
@@ -190,9 +185,7 @@ Server = http://127.0.0.1/archlinux/$repo/os/$arch
 [mingw-w64]
 SigLevel = Optional TrustAll
 Server = http://127.0.0.1/archlinux/$repo/os/$arch
-[ant32]
-SigLevel = Optional TrustAll
-Server = https://dl.dropboxusercontent.com/u/195642432' >> "$chroot_dir/root/etc/pacman.conf"
+' >> "$chroot_dir/root/etc/pacman.conf"
 
   sed 's|#PACKAGER="John Doe <john@doe.com>"|PACKAGER="ant32 <antreimer@gmail.com>"|' -i "$chroot_dir/root/etc/makepkg.conf"
 

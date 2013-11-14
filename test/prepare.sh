@@ -45,10 +45,7 @@ SigLevel = Optional TrustAll
 Server = file:///srv/http/archlinux/$repo/os/$arch
 [mingw-w64-testing]
 SigLevel = Optional TrustAll
-Server = file:///srv/http/archlinux/$repo/os/$arch
-[ant32]
-SigLevel = Optional TrustAll
-Server = https://dl.dropboxusercontent.com/u/195642432' >> /etc/pacman.conf
+Server = file:///srv/http/archlinux/$repo/os/$arch' >> /etc/pacman.conf
 
 # set up http server
 #service

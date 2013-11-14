@@ -37,7 +37,7 @@ before_build() {
   [ "$npkg" = 'mingw-w64-physfs 2.0.3-2' ] && sed "s|('!strip' '!buildflags')|('staticlibs' '!strip' '!buildflags')|" -i PKGBUILD
   [ "$npkg" = 'mingw-w64-soil 0708-1' ] && sed "s|('!strip' '!buildflags')|('staticlibs' '!strip' '!buildflags')|" -i PKGBUILD
 
-  [ "$npkg" = 'c' ] && sed "s|('mingw-w64-gcc' 'mingw-w64-binutils')|('mingw-w64-gcc' 'mingw-w64-binutils' 'mingw-w64-pkg-config')|" -i PKGBUILD
+  [ "$npkg" = 'mingw-w64-libvorbis' ] && sed "s|('mingw-w64-gcc' 'mingw-w64-binutils')|('mingw-w64-gcc' 'mingw-w64-binutils' 'mingw-w64-pkg-config')|" -i PKGBUILD
 
   #skudo ----------
   # manual way to install qt4-dummy for now

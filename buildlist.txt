@@ -122,6 +122,8 @@ mingw-w64-sdl_net
 mingw-w64-sdl2_net
 mingw-w64-sdl_ttf
 mingw-w64-sdl2_ttf
+mingw-w64-sdl_gfx
+mingw-w64-sdl2_gfx
 mingw-w64-sparsehash
 mingw-w64-speex
 mingw-w64-stormlib
@@ -180,8 +182,6 @@ mingw-w64-libftdi1
 mingw-w64-qwt
 mingw-w64-nlopt
 mingw-w64-libsvm
-binfmt-support
-binfmt-wine
 mingw-w64-qscintilla
 mingw-w64-qsint
 mingw-w64-libgpg-error

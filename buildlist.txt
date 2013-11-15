@@ -96,7 +96,6 @@ mingw-w64-physfs
 mingw-w64-allegro
 mingw-w64-irrlicht
 mingw-w64-json-glib
-mingw-w64-lcms
 mingw-w64-lcms2
 mingw-w64-libcroco
 mingw-w64-libmikmod
@@ -214,7 +213,6 @@ mingw-w64-chipmunk
 mingw-w64-libpng-static
 mingw-w64-libxdiff
 mingw-w64-mixmod
-mingw-w64-nvidia-cg-toolkit
 mingw-w64-libgee
 mingw-w64-tox-git
 mingw-w64-venom-git

@@ -29,9 +29,9 @@ before_build() {
   [ "$npkg" = 'mingw-w64-enet 1.3.9-2' ] && sed "s|('!strip' '!buildflags' '!libtool')|('staticlibs' '!strip' '!buildflags')|" -i PKGBUILD
   [ "$npkg" = 'mingw-w64-flac 1:1.3.0-2' ] && sed "s|(!libtool !strip !buildflags)|(!staticlibs !strip !buildflags)|" -i PKGBUILD
   [ "$npkg" = 'mingw-w64-glew 1.10.0-2' ] && sed "s|(!strip !buildflags)|(staticlibs !strip !buildflags)|" -i PKGBUILD
-  [ "$npkg" = 'mingw-w64-libogg' ] && sed "s|('!libtool' '!strip' '!buildflags')|('staticlibs' '!strip' '!buildflags')|" -i PKGBUILD
+  [ "$npkg" = 'mingw-w64-libogg 1.3.1-2' ] && sed "s|('!libtool' '!strip' '!buildflags')|('staticlibs' '!strip' '!buildflags')|" -i PKGBUILD
   [ "$npkg" = 'mingw-w64-libsndfile 1.0.25-2' ] && sed "s|('!libtool' '!strip')|('staticlibs' '!strip')|" -i PKGBUILD
-  [ "$npkg" = 'mingw-w64-libvorbis' ] && sed "s|(!libtool !strip !buildflags)|(staticlibs !strip !buildflags)|" -i PKGBUILD
+  [ "$npkg" = 'mingw-w64-libvorbis 1.3.3-2' ] && sed "s|(!libtool !strip !buildflags)|(staticlibs !strip !buildflags)|" -i PKGBUILD
   [ "$npkg" = 'mingw-w64-lua 5.2.2-1' ] && sed "s|(!strip !buildflags)|(staticlibs !strip !buildflags)|" -i PKGBUILD
   [ "$npkg" = 'mingw-w64-openal 1.15.1-4' ] && sed "s|(!strip !buildflags)|(staticlibs !strip !buildflags)|" -i PKGBUILD
   [ "$npkg" = 'mingw-w64-physfs 2.0.3-2' ] && sed "s|('!strip' '!buildflags')|('staticlibs' '!strip' '!buildflags')|" -i PKGBUILD
@@ -59,7 +59,6 @@ before_build() {
 modify_ver() {
   # manual changes to some packages to make them not auto update
   [ "$npkg" = 'gyp-svn 1775-1' ] && nver='1779-1'
-  [ "$npkg" = 'mingw-w64-libiconv 1.14-7' ] && nver='rebuild'
 }
 
 

@@ -81,6 +81,7 @@ mingw-w64-gtkmm
 mingw-w64-gtkmm3
 mingw-w64-gtksourceview2
 mingw-w64-tcl
+mingw-w64-tk
 mingw-w64-gmp
 mingw-w64-nettle
 mingw-w64-libtasn1
@@ -168,8 +169,6 @@ mingw-w64-lapack
 mingw-w64-libgnurx
 mingw-w64-intel-tbb
 mingw-w64-freeglut
-mingw-w64-plibc
-mingw-w64-microhttpd
 mingw-w64-xalan-c
 mingw-w64-proj
 mingw-w64-uriparser
@@ -186,7 +185,7 @@ mingw-w64-qscintilla
 mingw-w64-qsint
 mingw-w64-libgpg-error
 mingw-w64-libgcrypt
-mingw-x64-libxslt
+mingw-w64-libxslt
 mingw-w64-libglade
 mingw-w64-libzip
 mingw-w64-zziplib
@@ -204,7 +203,6 @@ mingw-w64-freealut
 mingw-w64-python2
 mingw-w64-python
 mingw-w64-gdbm
-mingw-w64-spheresim-git
 mingw-w64-wxmsw
 mingw-w64-wxmsw-static
 mingw-w64-libuecc
@@ -217,6 +215,7 @@ mingw-w64-libpng-static
 mingw-w64-libxdiff
 mingw-w64-mixmod
 mingw-w64-nvidia-cg-toolkit
+mingw-w64-libgee
 mingw-w64-tox-git
 mingw-w64-venom-git
 mingw-w64-winpthreads-static
@@ -224,5 +223,10 @@ mingw-w64-wxmsw2.9-static
 mingw-w64-wxmsw2.9-static-with-debug
 mingw-w64-zlib-static
 mingw-w64-glib-networking
+mingw-w64-spheresim-git
+mingw-w64-poppler
+mingw-w64-lzo2
+mingw-w64-libmad
+mingw-w64-cppunit
 mingw-w64-testsuite
 

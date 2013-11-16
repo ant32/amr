@@ -5,7 +5,7 @@ pacman -Syu --ignore filesystem,bash --noconfirm
 pacman -S bash --noconfirm
 pacman -Su --noconfirm
 # install needed packages
-yes | pacman -Sy devtools screen darkhttpd
+yes | pacman -Sy devtools screen darkhttpd git
 
 mkdir -p /build /scripts
 

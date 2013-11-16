@@ -17,8 +17,8 @@ rm -fR PKGBUILD src pkg
 cd /scripts
 
 curl -O https://raw.github.com/ant32/amr/master/buildlist.txt
-curl -O https://raw.github.com/ant32/amr/master/test/update.sh
-curl -O https://raw.github.com/ant32/amr/master/test/repo_update.sh
+curl -O https://raw.github.com/ant32/amr/master/update.sh
+curl -O https://raw.github.com/ant32/amr/master/repo_update.sh
 chmod +x update.sh
 chmod +x repo_update.sh
 
@@ -40,10 +40,10 @@ echo '/swapfile none swap defaults 0 0' >> /etc/fstab
 echo '
 [multilib]
 Include = /etc/pacman.d/mirrorlist
-[mingw-w64]
+[mingw-w64-testing]
 SigLevel = Optional TrustAll
 Server = file:///srv/http/archlinux/$repo/os/$arch
-[mingw-w64-testing]
+[mingw-w64]
 SigLevel = Optional TrustAll
 Server = file:///srv/http/archlinux/$repo/os/$arch' >> /etc/pacman.conf
 

@@ -214,17 +214,19 @@ mingw-w64-libpng-static
 mingw-w64-libxdiff
 mingw-w64-mixmod
 mingw-w64-libgee
-mingw-w64-tox-git
-mingw-w64-venom-git
+#mingw-w64-tox-git
+#mingw-w64-venom-git
 mingw-w64-winpthreads-static
 mingw-w64-wxmsw2.9-static
 mingw-w64-wxmsw2.9-static-with-debug
 mingw-w64-zlib-static
 mingw-w64-glib-networking
 mingw-w64-spheresim-git
-mingw-w64-poppler
+mingw-w64-icu
+#mingw-w64-poppler
 mingw-w64-lzo2
 mingw-w64-libmad
 mingw-w64-cppunit
+mingw-w64-ftgl
 mingw-w64-testsuite
 

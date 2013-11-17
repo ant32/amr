@@ -13,16 +13,6 @@ log_file="$log_dir/update.log"
 ############# MODIFICATIONS TO PACKAGES #############################
 
 before_build() {
-  #rubenvb --------
-  # mingw-w64-crt should makedepend on mingw-w64-gcc-base
-  [ "$npkg" = 'mingw-w64-crt 3.0.0-2' ] && \
-    sed -e "s|'mingw-w64-gcc-base' ||" \
-        -e "s|makedepends=()|makedepends=('mingw-w64-gcc-base')|" -i PKGBUILD
-
-  # mingw-w64-gcc should makedepend on mingw-w64-gcc-base
-  [ "$npkg" = 'mingw-w64-gcc 4.8.2-2' ] && \
-    sed "s|makedepends=(|makedepends=('mingw-w64-gcc-base' |" -i PKGBUILD
-
   #naelstrof ------
   # add staticlibs option and remove !libtool
   [ "$npkg" = 'mingw-w64-alure 1.2-2' ] && sed "s|(!strip !buildflags)|(staticlibs !strip !buildflags)|" -i PKGBUILD
@@ -58,7 +48,7 @@ before_build() {
 }
 modify_ver() {
   # manual changes to some packages to make them not auto update
-  [ "$npkg" = 'gyp-svn 1775-1' ] && nver='1779-1'
+  [ "$npkg" = 'gyp-svn 1775-1' ] && nver='1787-1'
 }
 
 

@@ -31,24 +31,27 @@ before_build() {
 
   #skudo ----------
   # manual way to install qt4-dummy for now
-  #if [ "$pkg" = 'mingw-w64-qt4-static' ]; then
-  #  [ "$dept" = 'mingw-w64-qt4' ] && unset dept
-  #  if [ "$dept" = 'mingw-w64-qt4-dummy' ]; then
-  #    pushd "$src_dir"
-  #    curl -O https://dl.dropboxusercontent.com/u/33784287/websharing/mingw-w64-qt4-dummy/PKGBUILD
-  #    makepkg -i --noconfirm --asroot
-  #    rm -fR pkg src mingw-w64-qt4-dummy-1-1-any.pkg.tar.xz PKGBUILD
-  #    unset dept
-  #    popd
-  #  fi
-  #fi
+  if [ "$pkg" = 'mingw-w64-qt4-static' ]; then
+    pushd "$src_dir"
+    curl -O https://dl.dropboxusercontent.com/u/33784287/websharing/mingw-w64-qt4-dummy/PKGBUILD
+    makepkg --noconfirm --asroot | tee -a "$pkg.log"
+    rm -R pkg src PKGBUILD
+    yes | makechrootpkg -r "$chroot_dir" -I mingw-w64-qt4-dummy-1-1-any.pkg.tar.xz -l root | tee -a "$pkg.log"
+    rm mingw-w64-qt4-dummy-1-1-any.pkg.tar.xz
+    popd
+  fi
+  [ "$last_pkg" = 'mingw-w64-qt4-static' ] && \
+    arch-nspawn "$chroot_dir/root" pacman -Rscnd mingw-w64-qt4-dummy | tee -a "$pkg.log"
+  
+  # used if needing to do something after last build but before next build_home
+  last_pkg="$pkg"
 
   # some source tarballs don't have the correct permissions
   chmod 777 -R .
 }
 modify_ver() {
   # manual changes to some packages to make them not auto update
-  [ "$npkg" = 'gyp-svn 1775-1' ] && nver='1787-1'
+  [ "$npkg" = 'gyp-svn 1787-1' ] && nver='1775-1'
 }
 
 

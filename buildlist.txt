@@ -28,7 +28,6 @@ mingw-w64-qt4-static
 mingw-w64-qt4-debug
 mingw-w64-qt5-base
 mingw-w64-qt5-base-static
-mingw-w64-qt5-jsbackend
 mingw-w64-qt5-declarative
 mingw-w64-qt5-graphicaleffects
 mingw-w64-qt5-quickcontrols
@@ -221,5 +220,12 @@ mingw-w64-lzo2
 mingw-w64-libmad
 mingw-w64-cppunit
 mingw-w64-ftgl
+binfmt-wine
+mingw-w64-cal3d-svn
+mingw-w64-coin-hg
+mingw-w64-hdf5
+mingw-w64-nvidia-cg-toolkit
+mingw-w64-tinyxml
+mingw-w64-harfbuzz
+mingw-w64-libmodbus
 mingw-w64-testsuite
-

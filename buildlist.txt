@@ -28,6 +28,8 @@ mingw-w64-qt4-static
 mingw-w64-qt4-debug
 mingw-w64-qt5-base
 mingw-w64-qt5-base-static
+mingw-w64-qt5-base-opengl
+mingw-w64-qt5-base-internal-angle
 mingw-w64-qt5-declarative
 mingw-w64-qt5-graphicaleffects
 mingw-w64-qt5-quickcontrols
@@ -143,6 +145,8 @@ mingw-w64-opus
 mingw-w64-fribidi
 mingw-w64-gsm
 mingw-w64-lame
+mingw-w64-recode
+mingw-w64-enca
 mingw-w64-libass
 mingw-w64-libbluray
 mingw-w64-libmodplug
@@ -190,7 +194,6 @@ mingw-w64-mpfr
 mingw-w64-qrencode
 mingw-w64-taglib
 mingw-w64-zeromq
-mingw-w64-freealut
 mingw-w64-python2
 mingw-w64-python
 mingw-w64-gdbm
@@ -215,7 +218,7 @@ mingw-w64-zlib-static
 mingw-w64-glib-networking
 mingw-w64-spheresim-git
 mingw-w64-icu
-#mingw-w64-poppler
+mingw-w64-poppler
 mingw-w64-lzo2
 mingw-w64-libmad
 mingw-w64-cppunit
@@ -228,4 +231,7 @@ mingw-w64-nvidia-cg-toolkit
 mingw-w64-tinyxml
 mingw-w64-harfbuzz
 mingw-w64-libmodbus
+#mingw-w64-goocanvas
+mingw-w64-hidapi
+mingw-w64-libusb
 mingw-w64-testsuite

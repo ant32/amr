@@ -6,42 +6,27 @@ src_dir="$build_home/build"
 script_dir="$build_home/scripts"
 log_dir="$build_home/srv/http/logs"
 pkgbuilds_dir="$build_home/build/pkgbuilds"
-repo_dir="/srv/http/archlinux/mingw-w64-testing/os/x86_64"
+test_dir="/srv/http/archlinux/mingw-w64-testing/os/x86_64"
+repo_dir="/srv/http/archlinux/mingw-w64/os/x86_64"
 log_file="$log_dir/update.log"
 
 
 ############# MODIFICATIONS TO PACKAGES #############################
 
 before_build() {
-  #naelstrof ------
-  # add staticlibs option and remove !libtool
-  [ "$npkg" = 'mingw-w64-alure 1.2-2' ] && sed "s|(!strip !buildflags)|(staticlibs !strip !buildflags)|" -i PKGBUILD
-  [ "$npkg" = 'mingw-w64-enet 1.3.9-2' ] && sed "s|('!strip' '!buildflags' '!libtool')|('staticlibs' '!strip' '!buildflags')|" -i PKGBUILD
-  [ "$npkg" = 'mingw-w64-flac 1:1.3.0-2' ] && sed "s|(!libtool !strip !buildflags)|(!staticlibs !strip !buildflags)|" -i PKGBUILD
-  [ "$npkg" = 'mingw-w64-glew 1.10.0-2' ] && sed "s|(!strip !buildflags)|(staticlibs !strip !buildflags)|" -i PKGBUILD
-  [ "$npkg" = 'mingw-w64-libogg 1.3.1-2' ] && sed "s|('!libtool' '!strip' '!buildflags')|('staticlibs' '!strip' '!buildflags')|" -i PKGBUILD
-  [ "$npkg" = 'mingw-w64-libsndfile 1.0.25-2' ] && sed "s|('!libtool' '!strip')|('staticlibs' '!strip')|" -i PKGBUILD
-  [ "$npkg" = 'mingw-w64-libvorbis 1.3.3-2' ] && sed "s|(!libtool !strip !buildflags)|(staticlibs !strip !buildflags)|" -i PKGBUILD
-  [ "$npkg" = 'mingw-w64-lua 5.2.2-1' ] && sed "s|(!strip !buildflags)|(staticlibs !strip !buildflags)|" -i PKGBUILD
-  [ "$npkg" = 'mingw-w64-openal 1.15.1-4' ] && sed "s|(!strip !buildflags)|(staticlibs !strip !buildflags)|" -i PKGBUILD
-  [ "$npkg" = 'mingw-w64-physfs 2.0.3-2' ] && sed "s|('!strip' '!buildflags')|('staticlibs' '!strip' '!buildflags')|" -i PKGBUILD
-  [ "$npkg" = 'mingw-w64-soil 0708-1' ] && sed "s|('!strip' '!buildflags')|('staticlibs' '!strip' '!buildflags')|" -i PKGBUILD
-
-  [ "$npkg" = 'mingw-w64-libvorbis 1.3.3-2' ] && sed "s|('mingw-w64-gcc' 'mingw-w64-binutils')|('mingw-w64-gcc' 'mingw-w64-binutils' 'mingw-w64-pkg-config')|" -i PKGBUILD
-
   #skudo ----------
   # manual way to install qt4-dummy for now
   if [ "$pkg" = 'mingw-w64-qt4-static' ]; then
     pushd "$src_dir"
     curl -O https://dl.dropboxusercontent.com/u/33784287/websharing/mingw-w64-qt4-dummy/PKGBUILD
-    makepkg --noconfirm --asroot | tee -a "$pkg.log"
+    makepkg --noconfirm --asroot 2>&1 | tee -a "$pkg.log"
     rm -R pkg src PKGBUILD
-    yes | makechrootpkg -r "$chroot_dir" -I mingw-w64-qt4-dummy-1-1-any.pkg.tar.xz -l root | tee -a "$pkg.log"
+    yes | makechrootpkg -r "$chroot_dir" -I mingw-w64-qt4-dummy-1-1-any.pkg.tar.xz -l root -- --noprogressbar 2>&1 | tee -a "$pkg.log"
     rm mingw-w64-qt4-dummy-1-1-any.pkg.tar.xz
     popd
   fi
   [ "$last_pkg" = 'mingw-w64-qt4-static' ] && \
-    arch-nspawn "$chroot_dir/root" pacman -Rscnd mingw-w64-qt4-dummy | tee -a "$pkg.log"
+    arch-nspawn "$chroot_dir/root" pacman -Rscnd --quiet --noconfirm mingw-w64-qt4-dummy 2>&1 | tee -a "$pkg.log"
   
   # used if needing to do something after last build but before next build_home
   last_pkg="$pkg"
@@ -51,11 +36,31 @@ before_build() {
 }
 modify_ver() {
   # manual changes to some packages to make them not auto update
-  [ "$npkg" = 'gyp-svn 1787-1' ] && nver='1775-1'
+  [ "$npkg" = 'gyp-svn 1775-1' ] && nver='1820-1'
 }
 
 
 ############# FUNCTIONS #############################################
+
+fix_name(){
+  # sourceforge does not accept the colon that is produced from packages with an epoch.
+  fname=${1/:/_}
+  # create a variable withouth the extension
+  s=${fname/.pkg.tar.xz/}
+  max=""
+  # find previous packages
+  for f in $(find "$test_dir" "$repo_dir" -name $s*.pkg.tar.xz); do
+    # get rebuild number
+    n=$(echo $f | sed "s|.*${s}\(.*\).pkg.tar.xz|\1|")
+    # if not rebuild number set max at 0
+    [ "$n" = "" ] && [ "$max" = "" ] && max='0'
+    # remove the underscore and check if it is the max rebuild version
+    [[ ${n/_/} -gt $max ]] && max=${n/_/}
+  done
+  # if a previous build increment rebuild version and set new name
+  [ "$max" != "" ] && let "max+=1" && fname="${s}_$max.pkg.tar.xz"
+  echo $fname
+}
 
 compile() {
   for pkg in "${buildlist[@]}"; do
@@ -69,16 +74,14 @@ compile() {
       before_build
       # compile package
       arch-nspawn "$chroot_dir/root" pacman -Sy
-      makechrootpkg -c -r "$chroot_dir" -l mingw | tee "$pkg.log"
+      makechrootpkg -c -r "$chroot_dir" -l mingw -- --noprogressbar 2>&1 | tee "$pkg.log"
       # if package was created update temp repository
       if [ -f *.pkg.tar.xz ]; then
         for pkgtar in *.pkg.tar.xz; do
-          # sourceforge does not accept the colon that is produced from packages with an epoch.
-          npkgtar="${pkgtar/:/_}"
-          mv "$pkgtar" "$repo_dir/$npkgtar"
-          repo-add "$repo_dir/$repo_name.db.tar.gz" "$repo_dir/$npkgtar"
-          # delete old package from cache since the checksum of it is incorrect now.
-          rm "/var/cache/pacman/pkg/$npkgtar"
+          npkgtar=$(fix_name $pkgtar)
+          # move to test dir and add to test repo
+          mv "$pkgtar" "$test_dir/$npkgtar"
+          repo-add "$test_dir/$repo_name.db.tar.gz" "$test_dir/$npkgtar"
         done
       else
         sed -i '$ d' $log_file # delete last line and replace with failed

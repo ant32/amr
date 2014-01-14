@@ -2,10 +2,11 @@
 
 testmingw() {
  while read pkg; do
-   [ "`yaourt -Si $pkg | grep Maintainer`" = "Maintainer     : -" ] && maint=false || maint=true
-   [ "`yaourt -Si $pkg | grep Repository`" = "Repository     : mingw-w64" ] && repo=true || repo=false
-   ! $maint && $repo && echo "$pkg is no longer maintained"
-   $maint && ! $repo && echo "$pkg is not in the repository"
+   maint=false; repo=false
+   [[ "`yaourt -Si aur/$pkg | grep Maintainer`" = "Maintainer     : -" ]] && maint=true
+   [[ "`yaourt -Si $pkg | grep Repository`" = "Repository     : mingw-w64"* ]] && repo=true
+   $maint && $repo && echo "$pkg is no longer maintained"
+   ! $maint && ! $repo && echo "$pkg is not in the repository"
  done
 }
 

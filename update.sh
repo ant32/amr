@@ -36,31 +36,15 @@ before_build() {
 }
 modify_ver() {
   # manual changes to some packages to make them not auto update
-  [ "$npkg" = 'gyp-svn 1775-1' ] && nver='1820-1'
+  [ "$npkg" = 'gyp-svn 1775-1' ] && nver='1847-1'
+  [ "$npkg" = 'mingw-w64-cal3d-svn 560-1' ] && nver='562-1'
+  [ "$npkg" = 'mingw-w64-headers-svn 6298-1' ] && nver='6479-1'
+  [ "$npkg" = 'mingw-w64-crt-svn 6362-1' ] && nver='6479-1'
+  [ "$npkg" = 'mingw-w64-winpthreads-svn 6362-1' ] && nver='6479-1'
 }
 
 
 ############# FUNCTIONS #############################################
-
-fix_name(){
-  # sourceforge does not accept the colon that is produced from packages with an epoch.
-  fname=${1/:/_}
-  # create a variable withouth the extension
-  s=${fname/.pkg.tar.xz/}
-  max=""
-  # find previous packages
-  for f in $(find "$test_dir" "$repo_dir" -name $s*.pkg.tar.xz); do
-    # get rebuild number
-    n=$(echo $f | sed "s|.*${s}\(.*\).pkg.tar.xz|\1|")
-    # if not rebuild number set max at 0
-    [ "$n" = "" ] && [ "$max" = "" ] && max='0'
-    # remove the underscore and check if it is the max rebuild version
-    [[ ${n/_/} -gt $max ]] && max=${n/_/}
-  done
-  # if a previous build increment rebuild version and set new name
-  [ "$max" != "" ] && let "max+=1" && fname="${s}_$max.pkg.tar.xz"
-  echo $fname
-}
 
 compile() {
   for pkg in "${buildlist[@]}"; do
@@ -78,7 +62,7 @@ compile() {
       # if package was created update temp repository
       if [ -f *.pkg.tar.xz ]; then
         for pkgtar in *.pkg.tar.xz; do
-          npkgtar=$(fix_name $pkgtar)
+          npkgtar=$(/scripts/fixname.py $pkgtar)
           # move to test dir and add to test repo
           mv "$pkgtar" "$test_dir/$npkgtar"
           repo-add "$test_dir/$repo_name.db.tar.gz" "$test_dir/$npkgtar"

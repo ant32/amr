@@ -1,3 +1,7 @@
+mingw-w64-headers-svn
+mingw-w64-crt-svn
+mingw-w64-crt-patched
+mingw-w64-winpthreads-svn
 mingw-w64-cmake
 mingw-w64-zlib
 mingw-w64-termcap
@@ -22,14 +26,13 @@ mingw-w64-libmariadbclient
 mingw-w64-postgresql-libs
 gyp-svn
 mingw-w64-angleproject
-mingw-w64-angleproject-svn
+mingw-w64-angleproject-git
 mingw-w64-qt4
 mingw-w64-qt4-static
 mingw-w64-qt4-debug
 mingw-w64-qt5-base
 mingw-w64-qt5-base-static
 mingw-w64-qt5-base-opengl
-mingw-w64-qt5-base-internal-angle
 mingw-w64-qt5-declarative
 mingw-w64-qt5-graphicaleffects
 mingw-w64-qt5-quickcontrols
@@ -40,6 +43,11 @@ mingw-w64-qt5-serialport
 mingw-w64-qt5-translations
 mingw-w64-qt5-sensors
 mingw-w64-qt5-imageformats
+mingw-w64-qt5-location
+mingw-w64-qt5-multimedia
+mingw-w64-qt5-systems-git
+mingw-w64-qt5-svg
+mingw-w64-qt5-3d-git
 mingw-w64-quazip-qt4
 mingw-w64-quazip-qt5
 mingw-w64-qcustomplot-qt5
@@ -170,9 +178,9 @@ mingw-w64-uriparser
 mingw-w64-fftw
 innoextract
 mingw-w64-csfml
-mingw-w64-confuse
 mingw-w64-libusbx
-mingw-w64-libftdi1
+mingw-w64-confuse
+mingw-w64-libftdi
 mingw-w64-qwt
 mingw-w64-nlopt
 mingw-w64-libsvm
@@ -185,7 +193,7 @@ mingw-w64-libglade
 mingw-w64-libzip
 mingw-w64-zziplib
 mingw-w64-xz
-mingw-w64-eigen3
+mingw-w64-eigen
 mingw-w64-gsl
 mingw-w64-libltdl
 mingw-w64-libsodium
@@ -231,7 +239,8 @@ mingw-w64-nvidia-cg-toolkit
 mingw-w64-tinyxml
 mingw-w64-harfbuzz
 mingw-w64-libmodbus
-#mingw-w64-goocanvas
+mingw-w64-goocanvas
 mingw-w64-hidapi
 mingw-w64-libusb
-mingw-w64-testsuite
+mingw-w64-vala
+#mingw-w64-testsuite

@@ -1,6 +1,5 @@
 mingw-w64-headers-svn
 mingw-w64-crt-svn
-mingw-w64-crt-patched
 mingw-w64-winpthreads-svn
 mingw-w64-cmake
 mingw-w64-zlib
@@ -48,6 +47,7 @@ mingw-w64-qt5-multimedia
 mingw-w64-qt5-systems-git
 mingw-w64-qt5-svg
 mingw-w64-qt5-3d-git
+mingw-w64-qt5-webkit
 mingw-w64-quazip-qt4
 mingw-w64-quazip-qt5
 mingw-w64-qcustomplot-qt5
@@ -178,10 +178,10 @@ mingw-w64-uriparser
 mingw-w64-fftw
 innoextract
 mingw-w64-csfml
-mingw-w64-libusbx
 mingw-w64-confuse
 mingw-w64-libftdi
 mingw-w64-qwt
+mingw-w64-qwt5
 mingw-w64-nlopt
 mingw-w64-libsvm
 mingw-w64-qscintilla
@@ -204,6 +204,7 @@ mingw-w64-taglib
 mingw-w64-zeromq
 mingw-w64-python2
 mingw-w64-python
+mingw-w64-python2-native
 mingw-w64-gdbm
 mingw-w64-wxmsw
 mingw-w64-wxmsw-static
@@ -243,4 +244,5 @@ mingw-w64-goocanvas
 mingw-w64-hidapi
 mingw-w64-libusb
 mingw-w64-vala
+mingw-w64-x265
 #mingw-w64-testsuite

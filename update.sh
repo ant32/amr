@@ -38,9 +38,9 @@ modify_ver() {
   # manual changes to some packages to make them not auto update
   [ "$npkg" = 'gyp-svn 1775-1' ] && nver='1847-1'
   [ "$npkg" = 'mingw-w64-cal3d-svn 560-1' ] && nver='562-1'
-  [ "$npkg" = 'mingw-w64-headers-svn 6298-1' ] && nver='6479-1'
-  [ "$npkg" = 'mingw-w64-crt-svn 6362-1' ] && nver='6479-1'
-  [ "$npkg" = 'mingw-w64-winpthreads-svn 6362-1' ] && nver='6479-1'
+  [ "$npkg" = 'mingw-w64-headers-svn 6298-1' ] && nver='6497-1'
+  [ "$npkg" = 'mingw-w64-crt-svn 6362-1' ] && nver='6497-1'
+  [ "$npkg" = 'mingw-w64-winpthreads-svn 6362-1' ] && nver='6497-1'
 }
 
 

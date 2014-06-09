@@ -1,14 +1,13 @@
 #!/usr/bin/bash
-build_home=''
-repo_name='mingw-w64-testing'
+build_home='/build/amr'
+repo_name='testing'
 chroot_dir="$build_home/build/chroot"
 src_dir="$build_home/build"
-script_dir="$build_home/scripts"
-log_dir="$build_home/srv/http/logs"
+script_dir="$build_home"
+log_dir="$build_home/logs"
 pkgbuilds_dir="$build_home/build/pkgbuilds"
-test_dir="/srv/http/archlinux/mingw-w64-testing/os/x86_64"
-repo_dir="/srv/http/archlinux/mingw-w64/os/x86_64"
-log_file="$log_dir/update.log"
+test_dir="$build_home/repo"
+log_file="$build_home/update.log"
 
 
 ############# MODIFICATIONS TO PACKAGES #############################
@@ -38,9 +37,9 @@ modify_ver() {
   # manual changes to some packages to make them not auto update
   [ "$npkg" = 'gyp-svn 1775-1' ] && nver='1847-1'
   [ "$npkg" = 'mingw-w64-cal3d-svn 560-1' ] && nver='562-1'
-  [ "$npkg" = 'mingw-w64-headers-svn 6298-1' ] && nver='6497-1'
-  [ "$npkg" = 'mingw-w64-crt-svn 6362-1' ] && nver='6497-1'
-  [ "$npkg" = 'mingw-w64-winpthreads-svn 6362-1' ] && nver='6497-1'
+  [ "$npkg" = 'mingw-w64-headers-svn 6298-1' ] && nver='6638-1'
+  [ "$npkg" = 'mingw-w64-crt-svn 6362-1' ] && nver='6638-1'
+  [ "$npkg" = 'mingw-w64-winpthreads-svn 6362-1' ] && nver='6638-1'
 }
 
 
@@ -62,7 +61,8 @@ compile() {
       # if package was created update temp repository
       if [ -f *.pkg.tar.xz ]; then
         for pkgtar in *.pkg.tar.xz; do
-          npkgtar=$(/scripts/fixname.py $pkgtar)
+          npkgtar=$(/build/amr/fixname.py $pkgtar)
+          echo "Renaming $pkgtar to $npkgtar"
           # move to test dir and add to test repo
           mv "$pkgtar" "$test_dir/$npkgtar"
           repo-add "$test_dir/$repo_name.db.tar.gz" "$test_dir/$npkgtar"
@@ -83,10 +83,12 @@ compile() {
 create_updatelist() {
   unset updatelist
   mkdir -p "$pkgbuilds_dir"
+  ./downloalpkgs.py
   # loop to check for packages that are outdated
+  echo "Find packages that need to be updated"
   for pkg in ${pkglist[@]}; do
-    echo "downloading PKGBUILD for $pkg"
-    curl -s "https://aur.archlinux.org/packages/${pkg:0:2}/$pkg/PKGBUILD" > "$pkgbuilds_dir/$pkg"
+    #echo "downloading PKGBUILD for $pkg"
+    #curl -s "https://aur.archlinux.org/packages/${pkg:0:2}/$pkg/PKGBUILD" > "$pkgbuilds_dir/$pkg"
     source_package "$pkgbuilds_dir/$pkg"
     curver=`pacman -Si $pkg 2>/dev/null | grep Version | tr -d ' ' | sed -e "s/Version://" | head -n 1`
     modify_ver
@@ -158,12 +160,12 @@ prepare_chroot() {
   echo '
 [multilib]
 Include = /etc/pacman.d/mirrorlist
-[mingw-w64-testing]
+[testing]
 SigLevel = Optional TrustAll
-Server = http://127.0.0.1/archlinux/$repo/os/$arch
+Server = http://127.0.0.1/
 [mingw-w64]
 SigLevel = Optional TrustAll
-Server = http://127.0.0.1/archlinux/$repo/os/$arch
+Server = http://downloads.sourceforge.net/project/mingw-w64-archlinux/$arch
 ' >> "$chroot_dir/root/etc/pacman.conf"
 
   sed 's|#PACKAGER="John Doe <john@doe.com>"|PACKAGER="ant32 <antreimer@gmail.com>"|' -i "$chroot_dir/root/etc/makepkg.conf"
@@ -179,6 +181,14 @@ if [ ! -f "$script_dir/lock" ]; then
   touch "$script_dir/lock"
   echo "STARTING UPDATE `date`" | tee -a $log_file
 
+  # mount sf directory
+  echo "You may be asked for the mingw-w64-archlinux sourceforge password"
+  sshfs ant32@frs.sourceforge.net:/home/frs/project/mingw-w64-archlinux /build/amr/sf -C
+  
+  # start darkhttpd
+  darkhttpd "$test_dir" &
+  dpid=$!
+  
   pacman -Sy
   prepare_chroot
 
@@ -192,12 +202,16 @@ if [ ! -f "$script_dir/lock" ]; then
     echo "Creating update list ..."
     create_updatelist
     echo "Creating build list (This may take a while) ..."
-    create_buildlist
+    #create_buildlist
+    buildlist=( "${updatelist[@]}" )
   fi
 
   echo "We will now start compiling ..."
   compile
 
+  # stop darkhttpd
+  kill -s 9 $dpid
+  
   # remove lock
   echo "Building packages completed at `date`" | tee -a $log_file
   clean_dirs

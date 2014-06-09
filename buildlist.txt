@@ -174,7 +174,6 @@ mingw-w64-intel-tbb
 mingw-w64-freeglut
 mingw-w64-xalan-c
 mingw-w64-proj
-mingw-w64-uriparser
 mingw-w64-fftw
 innoextract
 mingw-w64-csfml

@@ -110,6 +110,7 @@ mingw-w64-libyaml
 mingw-w64-ruby
 mingw-w64-llvm-libs
 mingw-w64-ode
+mingw-w64-openblas
 mingw-w64-openjpeg
 mingw-w64-protobuf
 mingw-w64-sdl
@@ -203,7 +204,9 @@ mingw-w64-taglib
 mingw-w64-zeromq
 mingw-w64-python2
 mingw-w64-python
+mingw-w64-python-native
 mingw-w64-python2-native
+mingw-w64-python26-native
 mingw-w64-gdbm
 mingw-w64-wxmsw
 mingw-w64-wxmsw-static

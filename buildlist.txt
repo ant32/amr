@@ -83,7 +83,6 @@ mingw-w64-gtkmm
 mingw-w64-gtkmm3
 mingw-w64-gtksourceview2
 mingw-w64-tcl
-mingw-w64-tk
 mingw-w64-gmp
 mingw-w64-nettle
 mingw-w64-libtasn1
@@ -93,10 +92,8 @@ mingw-w64-libidn
 mingw-w64-curl
 mingw-w64-db
 mingw-w64-dumb
-mingw-w64-gc
 mingw-w64-physfs
 mingw-w64-allegro
-mingw-w64-irrlicht
 mingw-w64-json-glib
 mingw-w64-lcms2
 mingw-w64-libcroco
@@ -109,10 +106,8 @@ mingw-w64-libxml++
 mingw-w64-libyaml
 mingw-w64-ruby
 mingw-w64-llvm-libs
-mingw-w64-ode
 mingw-w64-openblas
 mingw-w64-openjpeg
-mingw-w64-protobuf
 mingw-w64-sdl
 mingw-w64-sdl_image
 mingw-w64-sdl2
@@ -127,9 +122,7 @@ mingw-w64-sdl_ttf
 mingw-w64-sdl2_ttf
 mingw-w64-sdl_gfx
 mingw-w64-sdl2_gfx
-mingw-w64-sparsehash
 mingw-w64-speex
-mingw-w64-stormlib
 mingw-w64-xerces-c
 mingw-w64-tools
 mingw-w64-boost
@@ -177,7 +170,6 @@ mingw-w64-xalan-c
 mingw-w64-proj
 mingw-w64-fftw
 innoextract
-mingw-w64-csfml
 mingw-w64-confuse
 mingw-w64-libftdi
 mingw-w64-qwt
@@ -185,7 +177,6 @@ mingw-w64-qwt5
 mingw-w64-nlopt
 mingw-w64-libsvm
 mingw-w64-qscintilla
-mingw-w64-qsint
 mingw-w64-libgpg-error
 mingw-w64-libgcrypt
 mingw-w64-libxslt
@@ -213,15 +204,9 @@ mingw-w64-wxmsw-static
 mingw-w64-libuecc
 mingw-w64-lua51
 mingw-w64-taglib-static
-mingw-w64-kissfft
 mingw-w64-box2d
-mingw-w64-chipmunk
 mingw-w64-libpng-static
-mingw-w64-libxdiff
 mingw-w64-mixmod
-mingw-w64-libgee
-#mingw-w64-tox-git
-#mingw-w64-venom-git
 mingw-w64-winpthreads-static
 mingw-w64-wxmsw2.9-static
 mingw-w64-wxmsw2.9-static-with-debug
@@ -234,7 +219,6 @@ mingw-w64-lzo2
 mingw-w64-libmad
 mingw-w64-cppunit
 mingw-w64-ftgl
-binfmt-wine
 mingw-w64-cal3d-svn
 mingw-w64-coin-hg
 mingw-w64-hdf5
@@ -247,4 +231,3 @@ mingw-w64-hidapi
 mingw-w64-libusb
 mingw-w64-vala
 mingw-w64-x265
-#mingw-w64-testsuite

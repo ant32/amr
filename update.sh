@@ -1,13 +1,13 @@
 #!/usr/bin/bash
 build_home='/build/amr'
-repo_name='testing'
+repo_name='mingw-w64-testing'
 chroot_dir="$build_home/build/chroot"
 src_dir="$build_home/build"
 script_dir="$build_home"
-log_dir="$build_home/logs"
+log_dir="$build_home/Dropbox/logs"
 pkgbuilds_dir="$build_home/build/pkgbuilds"
-test_dir="$build_home/repo"
-log_file="$build_home/update.log"
+test_dir="$build_home/Dropbox/repo-testing"
+log_file="$build_home/Dropbox/update.log"
 
 
 ############# MODIFICATIONS TO PACKAGES #############################

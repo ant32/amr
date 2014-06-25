@@ -72,7 +72,7 @@ compile() {
         echo "$pkg failed to build" | tee -a $log_file
       fi
       # compress and store away log
-      tar -czf "$log_dir/`date "+%Y%m%d-%H%M"`-$pkg.log.tar.gz" "$pkg.log"
+      tar -czf "$log_dir/$pkg.log.tar.gz" "$pkg.log"
     popd
     # delete the package directory
     rm -fR "$src_dir/$pkg"
@@ -160,7 +160,7 @@ prepare_chroot() {
   echo '
 [multilib]
 Include = /etc/pacman.d/mirrorlist
-[testing]
+[mingw-w64-testing]
 SigLevel = Optional TrustAll
 Server = http://127.0.0.1/
 [mingw-w64]
@@ -180,10 +180,6 @@ if [ ! -f "$script_dir/lock" ]; then
   # create lock
   touch "$script_dir/lock"
   echo "STARTING UPDATE `date`" | tee -a $log_file
-
-  # mount sf directory
-  echo "You may be asked for the mingw-w64-archlinux sourceforge password"
-  sshfs ant32@frs.sourceforge.net:/home/frs/project/mingw-w64-archlinux /build/amr/sf -C
   
   # start darkhttpd
   darkhttpd "$test_dir" &

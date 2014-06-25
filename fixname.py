@@ -3,8 +3,8 @@ import os
 import sys
 import glob
 
-TEST_DIR = '/build/amr/repo/*.pkg.tar.xz'
-REPO_DIR = '/build/amr/sf/x86_64/*.pkg.tar.xz'
+TEST_DIR = '/build/amr/Dropbox/repo-testing/*.pkg.tar.xz'
+REPO_DIR = '/build/amr/Dropbox/repo/*.pkg.tar.xz'
 PKG_END = '.pkg.tar.xz'
 
 

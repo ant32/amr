@@ -205,12 +205,7 @@ mingw-w64-libuecc
 mingw-w64-lua51
 mingw-w64-taglib-static
 mingw-w64-box2d
-mingw-w64-libpng-static
 mingw-w64-mixmod
-mingw-w64-winpthreads-static
-mingw-w64-wxmsw2.9-static
-mingw-w64-wxmsw2.9-static-with-debug
-mingw-w64-zlib-static
 mingw-w64-glib-networking
 mingw-w64-spheresim-git
 mingw-w64-icu

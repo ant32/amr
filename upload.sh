@@ -9,7 +9,8 @@ dropboxd &
 rm $testingrepodir/$testingreponame.db*
 # copy all files to the main repo
 mv $testingrepodir/* $repodir
-repo-add $reponame.db.tar.gz *
+rm "$repodir/$reponame.db"*
+repo-add "$repodir/$reponame.db.tar.gz" $repodir/*
 #upload changes to sourceforge
 rsync -e ssh -vLu $repodir/* ant32@frs.sourceforge.net:/home/frs/project/mingw-w64-archlinux/x86_64/
 # create new testing repo

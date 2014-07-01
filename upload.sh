@@ -15,4 +15,4 @@ repo-add "$repodir/$reponame.db.tar.gz" $repodir/*
 rsync -e ssh -vLu $repodir/* ant32@frs.sourceforge.net:/home/frs/project/mingw-w64-archlinux/x86_64/
 # create new testing repo
 touch $testingrepodir/$testingreponame.db.tar.gz
-ln -s $testingrepodir/$testingreponame.db.db.tar.gz $testingrepodir/$testingreponame.db
+ln -s $testingrepodir/$testingreponame.db.tar.gz $testingrepodir/$testingreponame.db
